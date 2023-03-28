@@ -6,6 +6,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <memory>
 #include "../subject/subject.hpp"
 
 typedef enum Concrete_Subject_SOA_Type
@@ -36,9 +37,9 @@ class ConcreteSubject_0 : public Subject
         return instance;
     }
 
-    void RegisterSuject(uint16_t DID, observer* pobserver);
+    void RegisterSuject(uint16_t DID, std::shared_ptr<observer> pobserver);
 
-    void UnregisterSuject(uint16_t DID,observer* pobserver);
+    void UnregisterSuject(uint16_t DID,std::shared_ptr<observer> pobserver);
 
     void Notify(uint16_t DID , void* data,unsigned int len);
 
@@ -47,8 +48,8 @@ class ConcreteSubject_0 : public Subject
     {
         std::cout << "ConcreteSubject_0 default Constructor" << std::endl;
     }
-    std::map<uint16_t,std::vector<observer*>> Soamap;
-    std::list<observer*> m_observerslist;
+    std::map<uint16_t,std::vector<std::shared_ptr<observer>>> Soamap;
+    std::list<std::shared_ptr<observer>> m_observerslist;
     std::string m_name;
 };
 

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Concrete_subject.hpp"
 
-void ConcreteSubject_0::RegisterSuject(uint16_t DID,observer* pobserver)
+void ConcreteSubject_0::RegisterSuject(uint16_t DID,std::shared_ptr<observer> pobserver)
 {
     if(SOA_TYPE_MAX <= DID)
     {
@@ -12,7 +12,7 @@ void ConcreteSubject_0::RegisterSuject(uint16_t DID,observer* pobserver)
     // m_observerslist.push_back(pobserver);
 }
 
-void ConcreteSubject_0::UnregisterSuject(uint16_t DID,observer* pobserver)
+void ConcreteSubject_0::UnregisterSuject(uint16_t DID,std::shared_ptr<observer> pobserver)
 {
     m_observerslist.remove(pobserver);
 }

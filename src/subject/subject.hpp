@@ -21,12 +21,11 @@ public:
 
     /// @brief Interface of Register subject
     /// @param ptr of Concrete Observer 
-
-    virtual void RegisterSuject(uint16_t DID,observer* pobserver) = 0;
+    virtual void RegisterSuject(uint16_t DID,std::shared_ptr<observer> pobserver) = 0;
 
     /// @brief Interface of Unregister subject
     /// @param ptr of Concrete Observer
-    virtual void UnregisterSuject(uint16_t DID,observer* pobserver) = 0;
+    virtual void UnregisterSuject(uint16_t DID,std::shared_ptr<observer> pobserver) = 0;
 
     /// @brief Suject notify observers
     /// @param date The data suject wants to notify observers
