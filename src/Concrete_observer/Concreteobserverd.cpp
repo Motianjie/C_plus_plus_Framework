@@ -10,8 +10,8 @@ void ConcreteObserver_0::Notify(uint16_t DID,void* data,unsigned int len)
 {
     if(data != NULL && len > 0)
     {
-        std::cout << "Concrete name " << ConcreteObserver_0::GetName() << " " <<
-        "Notify len " << len << " Notify data " << data << " " << "DID " << DID << std::endl;
+        std::cout << "Notify DID " << DID << " ConcreteName:" << ConcreteObserver_0::GetName() <<
+        " Notifylen:" << len << " Notify data:" << data << std::endl;
     } 
 }
 
