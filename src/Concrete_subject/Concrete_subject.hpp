@@ -9,13 +9,6 @@
 #include <memory>
 #include "../subject/subject.hpp"
 
-typedef enum Concrete_Subject_SOA_Type
-{
-    SOA_TYPE_1,
-    SOA_TYPE_2,
-    SOA_TYPE_MAX,
-};
-
 class ConcreteSubject_0 : public Subject
 {
     public:
@@ -31,6 +24,12 @@ class ConcreteSubject_0 : public Subject
 
     void Notify(uint16_t DID , void* data,unsigned int len);
 
+    enum Concrete_Subject_SOA_Type : uint16_t
+    {
+        SOA_TYPE_1,
+        SOA_TYPE_2,
+        SOA_TYPE_MAX,
+    };
     private:
     ConcreteSubject_0()
     {

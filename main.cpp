@@ -11,10 +11,10 @@ int main(int argc, char **argv)
 
     Subject& subject = ConcreteSubject_0::get_instance();
 
-    subject.RegisterSuject(SOA_TYPE_1,pobserver_0);
-    subject.RegisterSuject(SOA_TYPE_1,pobserver_1);
-    subject.RegisterSuject(SOA_TYPE_2,pobserver_0);
-    subject.RegisterSuject(SOA_TYPE_2,pobserver_1);
+    subject.RegisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_0);
+    subject.RegisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_1);
+    subject.RegisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_0);
+    subject.RegisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_1);
 
     // subject.UnregisterSuject(SOA_TYPE_1,pobserver_0);
     // subject.UnregisterSuject(SOA_TYPE_1,pobserver_1);
@@ -23,8 +23,8 @@ int main(int argc, char **argv)
 
 
     uint8_t datatest[5] = {0x00};
-    subject.Notify(SOA_TYPE_1,datatest,sizeof(datatest));
-    subject.Notify(SOA_TYPE_2,datatest,sizeof(datatest));
-
+    subject.Notify(ConcreteSubject_0::SOA_TYPE_1,datatest,sizeof(datatest));
+    subject.Notify(ConcreteSubject_0::SOA_TYPE_2,datatest,sizeof(datatest));
+    uint16_t a = 0.99999999999;
     return 0;
 }
