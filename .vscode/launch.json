@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/observer_mode",
+            "program": "${workspaceFolder}/build/AG_OBSERVER_MODE",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

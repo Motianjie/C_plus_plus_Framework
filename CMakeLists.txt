@@ -1,9 +1,20 @@
+#cmake version require
 cmake_minimum_required(VERSION 3.0)
 
-project(OBSERVER_MODE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-elide-constructors -g -pthread -Wall")
+#User settings
+#Project name
+set(PROJNAME AG_OBSERVER_MODE)
+#App path
 set(APP_DIR ${CMAKE_SOURCE_DIR}/src/App/)
+#Middleware path
 set(MIDDLEWARE_DIR ${CMAKE_SOURCE_DIR}/src/Middleware/)
+
+#project name
+project(${PROJNAME})  
+
+#compile option
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-elide-constructors -g -pthread -Wall")
+
 #set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR})
 
 #include
@@ -21,10 +32,10 @@ add_subdirectory(${APP_DIR}Concrete_observer)
 add_subdirectory(${APP_DIR}Concrete_subject)
 
 #exe file
-add_executable(observer_mode main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 #
 
 #link library
-target_link_libraries(observer_mode Concrete_observer)
-target_link_libraries(observer_mode Concrete_subject)
+target_link_libraries(${PROJECT_NAME} Concrete_observer)
+target_link_libraries(${PROJECT_NAME} Concrete_subject)
 

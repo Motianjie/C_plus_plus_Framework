@@ -20,7 +20,7 @@ void spdlog_test()
 
 int main(int argc, char **argv)
 {
-    spdlog_test();
+    // spdlog_test();
     std::shared_ptr<observer> pobserver_0 = std::make_shared<ConcreteObserver_0>("Observer_0");
     std::shared_ptr<observer> pobserver_1 = std::make_shared<ConcreteObserver_0>("Observer_1");
 
