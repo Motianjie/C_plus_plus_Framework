@@ -1,9 +1,12 @@
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #include <iostream>
 #include <memory>
 #include "Concrete_subject.hpp"
 #include "Concreteobserverd.hpp"
 #include "spdlog/spdlog.h"
 #include "nlohmann/json.hpp"
+#include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
 // #define UNREGISTER_TEST
 
 void spdlog_test()
@@ -50,12 +53,18 @@ void json_test()
 
 }
 
+void log_test()
+{
+    auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "/home/thor/Desktop/Reconsitution_C++/log/async_log.txt");  
+    SPDLOG_LOGGER_INFO(async_file,"test");
+}
 
 
 int main(int argc, char **argv)
 {
     // json_test();
     // spdlog_test();
+    log_test();
     ConcreteObserver_0* pobserver_0 = ConcreteObserver_0::get_instance();
     ConcreteObserver_0* pobserver_1 = ConcreteObserver_0::get_instance();
 
