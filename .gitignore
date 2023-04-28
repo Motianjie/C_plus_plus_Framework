@@ -171,3 +171,5 @@ build/src/App/Concrete_subject/CMakeFiles/Concrete_subject.dir/DependInfo.cmake
 build/src/App/Concrete_subject/CMakeFiles/Concrete_subject.dir/flags.make
 build/src/App/Concrete_subject/CMakeFiles/Concrete_subject.dir/link.txt
 build/src/App/Concrete_subject/CMakeFiles/Concrete_subject.dir/progress.make
+build/CMakeFiles/AG_OBSERVER_MODE.dir/compiler_depend.internal
+build/src/App/Concrete_observer/CMakeFiles/Concrete_observer.dir/compiler_depend.internal

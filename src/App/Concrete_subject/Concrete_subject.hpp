@@ -20,9 +20,9 @@ class ConcreteSubject_0 : public Subject
         return instance;
     }
 
-    void RegisterSuject(uint16_t DID, std::shared_ptr<observer> pobserver);
+    void RegisterSuject(uint16_t DID, observer* pobserver);
 
-    void UnregisterSuject(uint16_t DID,std::shared_ptr<observer> pobserver);
+    void UnregisterSuject(uint16_t DID,observer* pobserver);
 
     void Notify(uint16_t DID , void* data,unsigned int len);
 
@@ -44,7 +44,7 @@ class ConcreteSubject_0 : public Subject
     ConcreteSubject_0& operator=(const ConcreteSubject_0&) = delete;
     ConcreteSubject_0(const ConcreteSubject_0&) = delete;
 
-    std::map<uint16_t,std::list<std::shared_ptr<observer>>> Soamap;
+    std::map<uint16_t,std::vector<observer*>> Soamap;
     std::string m_name;
 };
 

@@ -21,15 +21,15 @@ void spdlog_test()
 int main(int argc, char **argv)
 {
     // spdlog_test();
-    std::shared_ptr<observer> pobserver_0 = std::make_shared<ConcreteObserver_0>("Observer_0");
-    std::shared_ptr<observer> pobserver_1 = std::make_shared<ConcreteObserver_0>("Observer_1");
+    ConcreteObserver_0* pobserver_0 = ConcreteObserver_0::get_instance();
+    ConcreteObserver_0* pobserver_1 = ConcreteObserver_0::get_instance();
 
-    Subject &subject = ConcreteSubject_0::get_instance();
+    ConcreteSubject_0* subject = ConcreteSubject_0::get_instance();
 
-    subject.RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
-    subject.RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
-    subject.RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
-    subject.RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
 
 #ifdef UNREGISTER_TEST
     subject.UnregisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_0);
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     subject.UnregisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_1);
 #endif
     uint8_t datatest[5] = {0x00,0x01,0x02,0x03,0x04};
-    subject.Notify(ConcreteSubject_0::SOA_TYPE_1, datatest, sizeof(datatest));
-    subject.Notify(ConcreteSubject_0::SOA_TYPE_2, datatest, sizeof(datatest));
+    subject->Notify(ConcreteSubject_0::SOA_TYPE_1, datatest, sizeof(datatest));
+    subject->Notify(ConcreteSubject_0::SOA_TYPE_2, datatest, sizeof(datatest));
     return 0;
 }

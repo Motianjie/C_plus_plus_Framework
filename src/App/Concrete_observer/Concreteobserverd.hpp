@@ -23,8 +23,6 @@ public:
         return &instance;
     }
 
-
-
     void Notify(uint16_t DID, void* data,unsigned int len);
 
     std::string GetName(void);

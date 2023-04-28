@@ -1,9 +1,9 @@
 #include <iostream>
 #include "Concrete_subject.hpp"
 
-void ConcreteSubject_0::RegisterSuject(uint16_t DID,std::shared_ptr<observer> pobserver)
+void ConcreteSubject_0::RegisterSuject(uint16_t DID,observer* pobserver)
 {
-    if(SOA_TYPE_MAX <= DID || (pobserver.get() == nullptr))
+    if(SOA_TYPE_MAX <= DID)
     {
         std::cout << "Func[" << __FUNCTION__ << "]" << "DID over range" << std::endl;
         return;
@@ -11,15 +11,15 @@ void ConcreteSubject_0::RegisterSuject(uint16_t DID,std::shared_ptr<observer> po
     this->Soamap[DID].push_back(pobserver);
 }
 
-void ConcreteSubject_0::UnregisterSuject(uint16_t DID,std::shared_ptr<observer> pobserver)
+void ConcreteSubject_0::UnregisterSuject(uint16_t DID,observer* pobserver)
 {
-    if(SOA_TYPE_MAX <= DID || (pobserver.get() == nullptr))
+    if(SOA_TYPE_MAX <= DID)
     {
         spdlog::info("Func[{0:s}]",__FUNCTION__);
         std::cout << "Func[" << __FUNCTION__ << "]" << "DID over range" << std::endl;
         return;
     }
-    this->Soamap[DID].remove(pobserver);
+    // this->Soamap[DID].remove(pobserver);
 }
 
 void ConcreteSubject_0::Notify(uint16_t DID ,void* data,unsigned int len)
