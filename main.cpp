@@ -1,12 +1,14 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #include <iostream>
 #include <memory>
+#include <fstream>
 #include "Concrete_subject.hpp"
 #include "Concreteobserverd.hpp"
 #include "spdlog/spdlog.h"
 #include "nlohmann/json.hpp"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
+
 // #define UNREGISTER_TEST
 
 void spdlog_test()
@@ -55,8 +57,20 @@ void json_test()
 
 void log_test()
 {
+    /*
+     *write async log file
+     */
     auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "/home/thor/Desktop/Reconsitution_C++/log/async_log.txt");  
     SPDLOG_LOGGER_INFO(async_file,"test");
+
+    /*
+     *write bin file
+     */
+    std::ofstream ofs;
+    ofs.open("/home/thor/Desktop/Reconsitution_C++/log/bin_log.txt",std::ios::binary | std::ios::app);
+    uint8_t buffer[20] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
+    
+    ofs.write((const char *)buffer,sizeof(buffer));
 }
 
 

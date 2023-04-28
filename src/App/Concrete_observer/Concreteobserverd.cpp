@@ -19,10 +19,11 @@ void ConcreteObserver_0::Notify(uint16_t DID,void* data,unsigned int len)
             buff.push_back(*((uint8_t*)data+i));
         }
         
-        spdlog::info("Func[{}] ConcreteName[{}] Notifylen[{}] data[{}]",
+        spdlog::info("Func[{}] ConcreteName[{}] Notifylen[{}] DID[{}] data[{}]",
         __FUNCTION__,
         this->m_name,
         len,
+        DID,
         spdlog::to_hex(buff));
     } 
 }
