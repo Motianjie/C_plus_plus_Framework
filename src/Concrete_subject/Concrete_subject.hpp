@@ -30,9 +30,9 @@ class ConcreteSubject_0 : public Subject
     ConcreteSubject_0& operator=(const ConcreteSubject_0&) = delete;
     ConcreteSubject_0(const ConcreteSubject_0&) = delete;
 
-    static ConcreteSubject_0& get_instance()
+    static ConcreteSubject_0* get_instance()
     {
-        static ConcreteSubject_0 instance;
+        static ConcreteSubject_0* instance;
         return instance;
     }
 
