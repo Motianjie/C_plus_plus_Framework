@@ -24,6 +24,7 @@ include_directories(${APP_DIR}observer)
 include_directories(${APP_DIR}subject)
 include_directories(${APP_DIR})
 include_directories(${MIDDLEWARE_DIR}Middleware/spdlog)
+include_directories(${MIDDLEWARE_DIR}Middleware/nlohmann)
 include_directories(${MIDDLEWARE_DIR}Middleware)
 include_directories(${MIDDLEWARE_DIR})
 
