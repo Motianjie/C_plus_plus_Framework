@@ -25,9 +25,6 @@ public:
     /// @param len The len of data suject wants to notify observers
     virtual void Notify(uint16_t DID ,void* data,unsigned int len) = 0;
 
-    /// @brief Get Name of Concrete object
-    /// @return name of the object
-    virtual std::string GetName(void) = 0;
 };
 
 

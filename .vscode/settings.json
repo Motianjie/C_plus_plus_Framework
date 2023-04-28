@@ -54,6 +54,11 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "map": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "codecvt": "cpp",
+        "forward_list": "cpp",
+        "any": "cpp",
+        "filesystem": "cpp",
+        "valarray": "cpp"
     }
 }

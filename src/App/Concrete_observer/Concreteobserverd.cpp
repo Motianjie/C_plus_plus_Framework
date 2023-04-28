@@ -21,13 +21,8 @@ void ConcreteObserver_0::Notify(uint16_t DID,void* data,unsigned int len)
         
         spdlog::info("Func[{}] ConcreteName[{}] Notifylen[{}] data[{}]",
         __FUNCTION__,
-        ConcreteObserver_0::GetName(),
+        this->m_name,
         len,
         spdlog::to_hex(buff));
     } 
-}
-
-std::string ConcreteObserver_0::GetName(void)
-{
-    return m_name;
 }

@@ -19,7 +19,7 @@ void ConcreteSubject_0::UnregisterSuject(uint16_t DID,observer* pobserver)
         std::cout << "Func[" << __FUNCTION__ << "]" << "DID over range" << std::endl;
         return;
     }
-    // this->Soamap[DID].remove(pobserver);
+    this->Soamap[DID].remove(pobserver);
 }
 
 void ConcreteSubject_0::Notify(uint16_t DID ,void* data,unsigned int len)

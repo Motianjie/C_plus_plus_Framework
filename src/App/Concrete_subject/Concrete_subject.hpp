@@ -44,7 +44,7 @@ class ConcreteSubject_0 : public Subject
     ConcreteSubject_0& operator=(const ConcreteSubject_0&) = delete;
     ConcreteSubject_0(const ConcreteSubject_0&) = delete;
 
-    std::map<uint16_t,std::vector<observer*>> Soamap;
+    std::map<uint16_t,std::list<observer*>> Soamap;
     std::string m_name;
 };
 

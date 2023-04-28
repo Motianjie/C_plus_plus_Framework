@@ -8,10 +8,6 @@
 class ConcreteObserver_0 : public observer
 {
 public:
-    ConcreteObserver_0(std::string name):m_name(name)
-    {
-        spdlog::info("ConcreteObserver Constructor");
-    }
     ~ConcreteObserver_0();
 
     ConcreteObserver_0& operator=(const ConcreteObserver_0&) = delete;
@@ -24,13 +20,12 @@ public:
     }
 
     void Notify(uint16_t DID, void* data,unsigned int len);
-
-    std::string GetName(void);
 private:
     std::string m_name;
     ConcreteObserver_0()
     {
-        std::cout << "ConcreteObserver_0 default Constructor" << std::endl;
+        m_name="ConcreteObserver";
+        spdlog::info("ConcreteObserver default Constructor");
     }
 };
 
