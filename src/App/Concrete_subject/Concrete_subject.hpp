@@ -16,8 +16,8 @@ class ConcreteSubject_0 : public Subject
     public:
     static ConcreteSubject_0* get_instance()
     {
-        static ConcreteSubject_0* instance;
-        return instance;
+        static ConcreteSubject_0 instance;
+        return &instance;
     }
 
     void RegisterSuject(uint16_t DID, observer* pobserver);
