@@ -3,20 +3,20 @@
 
 void ConcreteSubject_0::RegisterSuject(uint16_t DID,observer* pobserver)
 {
-    if(SOA_TYPE_MAX <= DID)
+    if(SOA_TYPE_MAX <= DID || pobserver == nullptr)
     {
-        std::cout << "Func[" << __FUNCTION__ << "]" << "DID over range" << std::endl;
+        spdlog::info("Func[{:s}] Line[{:d}] DID over range or nullptr",__FUNCTION__,__LINE__);
         return;
     }
+    
     this->Soamap[DID].push_back(pobserver);
 }
 
 void ConcreteSubject_0::UnregisterSuject(uint16_t DID,observer* pobserver)
 {
-    if(SOA_TYPE_MAX <= DID)
+    if(SOA_TYPE_MAX <= DID || pobserver == nullptr)
     {
-        spdlog::info("Func[{0:s}]",__FUNCTION__);
-        std::cout << "Func[" << __FUNCTION__ << "]" << "DID over range" << std::endl;
+        spdlog::info("Func[{:s}] Line[{:d}] DID over range or nullptr",__FUNCTION__,__LINE__);
         return;
     }
     this->Soamap[DID].remove(pobserver);
