@@ -56,16 +56,19 @@ sint32 EpollServer::Epoll_Wait(void)
 
  void EpollServer::Epoll_Thread(void)
  {
+    std::cout << "Epoll thread created" << std::endl;
+    std::string threadName = "Epoll_Thread";
+    EpollServer_thread_m.detach();//
+    pthread_setname_np(pthread_self(), threadName.c_str());
+    
     sint32 clt_sock;
     uint32 recvlen;
     uint8 buff[8000];
     char buff1[8000];
-    std::string threadName = "Epoll_Thread";
-    pthread_setname_np(EpollServer_thread_m.native_handle(), threadName.c_str());
-    EpollServer_thread_m.detach();
+
     epfd_m = Epoll_Create();
     Epoll_AddEvent(un_sock_m);
-    std::cout << "Epoll thread created" << std::endl;
+
     while (1)
     {
         sint32 act_epoll_fds = Epoll_Wait();
@@ -85,7 +88,17 @@ sint32 EpollServer::Epoll_Wait(void)
                 
             }else if(evt_m[i].events&EPOLLIN)
             {
-                recvlen = recv(evt_m[i].data.fd, (char *)buff, (size_t)((ssize_t)1024), 0);
+                recvlen = recv(fd_idx, (char *)buff, (size_t)((ssize_t)1024), 0);
+                if(recvlen == -1)
+                {
+                    std::cout << "fail to read socket" << std::endl;
+                    close(fd_idx);
+                }
+                if(recvlen == 0u)
+                {
+                    std::cout<< "client disconnected" << std::endl;
+                    close(fd_idx);
+                }
                 epoll_recv_callback_m(evt_m[i].data.fd,buff,recvlen);
                 snprintf(buff1,recvlen,"%s\r\n",buff);
                 std::cout << "recv from socket:[" << evt_m[i].data.fd << "] " << buff1 << "len is " << recvlen << std::endl;
@@ -95,4 +108,7 @@ sint32 EpollServer::Epoll_Wait(void)
             }
         }
     }
+    close(un_sock_m);
+    close(epfd_m);
+ 
  }

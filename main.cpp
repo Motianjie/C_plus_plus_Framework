@@ -88,9 +88,9 @@ void EpollTcp_Test()
 
 int main(int argc, char **argv)
 {
-    // pid_t pid = getpid();
-    // std::cout << "当前进程的PID: " << pid << std::endl;
-    // pthread_setname_np(pthread_self(), "Main Thread");
+    pid_t pid = getpid();
+    std::cout << "当前进程的PID: " << pid << std::endl;
+    pthread_setname_np(pthread_self(), "Main Thread");
     EpollTcp_Test();
     while(1)
     {
