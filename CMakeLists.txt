@@ -22,6 +22,7 @@ include_directories(${APP_DIR}Concrete_observer)
 include_directories(${APP_DIR}Concrete_subject)
 include_directories(${APP_DIR}observer)
 include_directories(${APP_DIR}subject)
+include_directories(${APP_DIR}EpollTcp)
 include_directories(${APP_DIR})
 include_directories(${MIDDLEWARE_DIR}Middleware/spdlog)
 include_directories(${MIDDLEWARE_DIR}Middleware/nlohmann)
@@ -31,6 +32,7 @@ include_directories(${MIDDLEWARE_DIR})
 #static library
 add_subdirectory(${APP_DIR}Concrete_observer)
 add_subdirectory(${APP_DIR}Concrete_subject)
+add_subdirectory(${APP_DIR}EpollTcp)
 
 #exe file
 add_executable(${PROJECT_NAME} main.cpp)
@@ -39,4 +41,5 @@ add_executable(${PROJECT_NAME} main.cpp)
 #link library
 target_link_libraries(${PROJECT_NAME} Concrete_observer)
 target_link_libraries(${PROJECT_NAME} Concrete_subject)
+target_link_libraries(${PROJECT_NAME} EpollTcp)
 

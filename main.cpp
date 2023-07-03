@@ -8,7 +8,7 @@
 #include "nlohmann/json.hpp"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
-
+#include "EpollServer.hpp"
 // #define UNREGISTER_TEST
 
 void spdlog_test()
@@ -71,23 +71,43 @@ void log_test()
     uint8_t buffer[20] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
     
     ofs.write((const char *)buffer,sizeof(buffer));
+    // ofs << "hello world" << 1 << "world" << 2;
 }
+
+static void callback(sint32 clientfd,void* data,uint32 len)
+{
+    std::cout << "epoll callback" << std::endl;
+}
+void EpollTcp_Test()
+{
+    std::string path("/tmp/localsocket");
+    EpollServer *server = new EpollServer(callback,path);
+}
+
 
 
 int main(int argc, char **argv)
 {
+    // pid_t pid = getpid();
+    // std::cout << "当前进程的PID: " << pid << std::endl;
+    // pthread_setname_np(pthread_self(), "Main Thread");
+    EpollTcp_Test();
+    while(1)
+    {
+        sleep(1);
+    }
     // json_test();
     // spdlog_test();
-    log_test();
-    ConcreteObserver_0* pobserver_0 = ConcreteObserver_0::get_instance();
-    ConcreteObserver_0* pobserver_1 = ConcreteObserver_0::get_instance();
+    // log_test();
+    // ConcreteObserver_0* pobserver_0 = ConcreteObserver_0::get_instance();
+    // ConcreteObserver_0* pobserver_1 = ConcreteObserver_0::get_instance();
 
-    ConcreteSubject_0* subject = ConcreteSubject_0::get_instance();
+    // ConcreteSubject_0* subject = ConcreteSubject_0::get_instance();
 
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
+    // subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
+    // subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
+    // subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
+    // subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
 
 #ifdef UNREGISTER_TEST
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_0);
@@ -95,8 +115,8 @@ int main(int argc, char **argv)
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_0);
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_1);
 #endif
-    uint8_t datatest[5] = {0x00,0x01,0x02,0x03,0x04};
-    subject->Notify(ConcreteSubject_0::SOA_TYPE_1, datatest, sizeof(datatest));
-    subject->Notify(ConcreteSubject_0::SOA_TYPE_2, datatest, sizeof(datatest));
+    // uint8_t datatest[5] = {0x00,0x01,0x02,0x03,0x04};
+    // subject->Notify(ConcreteSubject_0::SOA_TYPE_1, datatest, sizeof(datatest));
+    // subject->Notify(ConcreteSubject_0::SOA_TYPE_2, datatest, sizeof(datatest));
     return 0;
 }

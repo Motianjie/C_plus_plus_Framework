@@ -8,7 +8,7 @@ class Subject
 {
 public:
     /// @brief Constructor
-    Subject(void)
+    Subject()
     {
         spdlog::info("Subject constructor");
     };
