@@ -74,12 +74,13 @@ sint32 IPCServer::Accept(sint32 socketfd)
     return clt_sock;
 }
 
+void IPCServer::AddIpcClient(sint32 clientfd)
+{
+    ipc_clients_m.push_back(clientfd);
+}
+
 IPCServer::~IPCServer()
 {
     unlink(ipcfile_m.c_str());
 }
 
-void IPCServer::Receive(void)
-{
-    std::cout << "IPC Server Receive" << std::endl;
-}

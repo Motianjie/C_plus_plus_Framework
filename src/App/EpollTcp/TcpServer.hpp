@@ -17,7 +17,7 @@ class TcpServerBase
 {
     
 public:
-    TcpServerBase(RecvCallback callback_in) : recv_callback(callback_in)
+    TcpServerBase()
     {
         std::cout << "TcpServerBase constructor" << std::endl;
     }
@@ -25,26 +25,25 @@ public:
     TcpServerBase& operator=(const TcpServerBase& other) = delete;
     TcpServerBase(TcpServerBase&& other)                 = delete;
     TcpServerBase& operator=(TcpServerBase&& other)      = delete;
-    TcpServerBase()                                      = delete;
 
     virtual sint32 Create(void) = 0;
     virtual sint32 Accept(sint32 socketfd) = 0;
-    virtual void Receive(void) = 0;
 
     virtual ~TcpServerBase()
     {
         std::cout << "TcpServerBase deconstructor " << std::endl;
     }
+
+    void Set_Nonblocking(sint32 sockfd);
+    boolean Set_PortReuse(sint32 sockfd);
 protected:
     const int MAX_LISTEN_NUM = 20;
     boolean Bind(int32_t sockfd, struct sockaddr *addr, uint32 addr_len);
     boolean Listen(sint32 sockfd, sint32 num);
     sint32 Send(int32_t clientfd, void *data, uint32 len);
-    void Set_Nonblocking(sint32 sockfd);
-    boolean Set_PortReuse(sint32 sockfd);
+
     void Close(sint32 sockfd);
     void Update(RecvCallback callback,sint32 clientfd,void *buff, uint32 len);
-    RecvCallback recv_callback = nullptr;
 };
 
 #endif 

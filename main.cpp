@@ -78,12 +78,24 @@ void log_test()
 
 static void callback(sint32 clientfd,void* data,uint32 len)
 {
-    std::cout << "epoll callback" << std::endl;
+    std::cout << "epoll callback clientfd " << clientfd << " len " << len << std::endl;
+}
+
+static void callback2(sint32 clientfd,void* data,uint32 len)
+{
+    std::cout << "epoll callback clientfd " << clientfd << " len " << len << std::endl;
 }
 void EpollTcp_Test()
 {
-    std::string path("/tmp/localsocket");
-    EpollServer *server = new EpollServer(callback,path);
+    std::string path("/tmp/localsocket1");
+    std::string path1("/tmp/localsocket");
+    EpollServer *server = new EpollServer();
+
+    static IPCServer ipc1(callback,path);
+    static IPCServer ipc2(callback2,path1);
+    server->Epoll_AddEvent(std::move(ipc1));
+    server->Epoll_AddEvent(std::move(ipc2));
+
 }
 
 struct sockettest
@@ -130,15 +142,15 @@ void test_()//测试std::map的键可以是自定义的结构体，但是要重�
 
 int main(int argc, char **argv)
 {
-    test_();
+    // test_();
     // pid_t pid = getpid();
     // std::cout << "当前进程的PID: " << pid << std::endl;
     // pthread_setname_np(pthread_self(), "Main Thread");
-    // EpollTcp_Test();
-    // while(1)
-    // {
-    //     sleep(1);
-    // }
+    EpollTcp_Test();
+    while(1)
+    {
+        sleep(1);
+    }
     // json_test();
     // spdlog_test();
     // log_test();
