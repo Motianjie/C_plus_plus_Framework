@@ -87,15 +87,19 @@ static void callback2(sint32 clientfd,void* data,uint32 len)
 }
 void EpollTcp_Test()
 {
-    std::string path("/tmp/localsocket1");
-    std::string path1("/tmp/localsocket");
+    std::string path("/tmp/localsocket");
+    std::string path1("/tmp/localsocket1");
     EpollServer *server = new EpollServer();
-
-    static IPCServer ipc1(callback,path);
+     static IPCServer ipc1(callback,path);
     static IPCServer ipc2(callback2,path1);
+
+    // server->Epoll_AddEvent(ipc1);
+    // server->Epoll_AddEvent(ipc2);
     server->Epoll_AddEvent(std::move(ipc1));
     server->Epoll_AddEvent(std::move(ipc2));
 
+    server->Epoll_DelEvent(ipc1);
+    // server->Epoll_DelEvent(ipc2);
 }
 
 struct sockettest

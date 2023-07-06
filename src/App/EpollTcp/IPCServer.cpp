@@ -1,5 +1,32 @@
 #include "IPCServer.hpp"
+#include <algorithm>
 
+IPCServer::IPCServer(const IPCServer& other)
+{
+    std::cout << "IPC Server copy constructor:"<< std::endl;
+    un_sock_m = other.un_sock_m;
+    StdRecvCallback = other.StdRecvCallback;
+    un_addr_m = other.un_addr_m;
+    ipcfile_m = other.ipcfile_m;
+}
+
+IPCServer::IPCServer(IPCServer&& other)
+{
+    std::cout<<"IPCServer move constructor " << std::endl;
+    un_sock_m = other.un_sock_m;
+    StdRecvCallback = other.StdRecvCallback;
+    un_addr_m = other.un_addr_m;
+    ipcfile_m = other.ipcfile_m;
+}
+
+/*============================================================================*/
+/*  @brief      Create a ipc server socket
+ *              Asynchronous and Non Reentrant
+ *  @param
+ *  @return
+ *      @retval     ipc server socket fd
+*/
+/*============================================================================*/ 
 sint32 IPCServer::Create(void)
 {
     sint32 svr_fd = socket(PF_UNIX, SOCK_STREAM, 0);
@@ -10,6 +37,16 @@ sint32 IPCServer::Create(void)
     return svr_fd;
 }
 
+
+/*============================================================================*/
+/*  @brief      copy ipc address to ipc server address
+ *              Asynchronous and Non Reentrant
+ *  @param
+ *  @return
+ *      @retval     false:copy failed
+ *      @retval     true:copy succeeded
+*/
+/*============================================================================*/ 
 boolean IPCServer::Ipc_Init()
 {
     un_sock_m = -1;
@@ -27,7 +64,15 @@ boolean IPCServer::Ipc_Init()
         
 }
 
-
+/*============================================================================*/
+/*  @brief      Finish Ipc server settings
+ *              Asynchronous and Non Reentrant
+ *  @param
+ *  @return
+ *      @retval     false:set failed
+ *      @retval     true:set succeeded
+*/
+/*============================================================================*/ 
 boolean IPCServer::Ipc_Startup(void)
 {
     boolean ret = false;
@@ -60,6 +105,14 @@ boolean IPCServer::Ipc_Startup(void)
     return true;
 }
 
+/*============================================================================*/
+/*  @brief      Accept ipc client connection
+ *              Asynchronous and Non Reentrant
+ *  @param
+ *  @return
+ *      @retval     client socket fd
+*/
+/*============================================================================*/ 
 sint32 IPCServer::Accept(sint32 socketfd)
 {
     sint32 clt_sock;
@@ -74,13 +127,44 @@ sint32 IPCServer::Accept(sint32 socketfd)
     return clt_sock;
 }
 
+/*============================================================================*/
+/*  @brief      Add client socket fd to ipc vector
+ *              Asynchronous and Non Reentrant
+ *  @param
+ *  @return
+ *      @retval     client socket fd
+*/
+/*============================================================================*/ 
 void IPCServer::AddIpcClient(sint32 clientfd)
 {
     ipc_clients_m.push_back(clientfd);
 }
 
+/*============================================================================*/
+/*  @brief      Delete client socket fd to ipc vector
+ *              Asynchronous and Non Reentrant
+ *  @param
+ *  @return
+ *      @retval     client socket fd
+*/
+/*============================================================================*/ 
+void IPCServer::DelIpcClient(sint32 clientfd)
+{
+    auto it = std::find(ipc_clients_m.begin(), ipc_clients_m.end(), clientfd);
+    if(it != ipc_clients_m.end())
+    {
+        std::cout << "Delete client fd " << (*it) << std::endl;
+        ipc_clients_m.erase(it);
+    }
+
+    for (sint32 ipc_client : ipc_clients_m)
+    {
+        std::cout << "Current ipc server " << un_sock_m <<  " ipc clients " << ipc_client << std::endl;
+    }
+}
+
 IPCServer::~IPCServer()
 {
-    unlink(ipcfile_m.c_str());
+    std::cout << "IPC Server destructor" << std::endl;
 }
 
