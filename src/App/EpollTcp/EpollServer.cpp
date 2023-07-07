@@ -13,6 +13,32 @@ sint32 EpollServer::Epoll_Create(void)
     return epoll_fd;
 }
 
+boolean EpollServer::Epoll_AddEvent(IPCServer* ipcserver_ptr)
+{
+    if(ipcserver_ptr)
+    {
+        struct epoll_event  ev;
+        ev.events   = EPOLLIN;
+        ev.data.fd  = ipcserver_ptr->un_sock_m;
+
+        ipc_ptr_m.push_back(ipcserver_ptr);
+        std::cout << "Add ipcserver to epoll master sockfd is " << ev.data.fd << std::endl;
+
+        while(epoll_ctl(epfd_m, EPOLL_CTL_ADD, ev.data.fd, &ev) == -1)
+        {
+            std::cout << " unix socket fd " << ev.data.fd << " server add epoll list error: " << strerror(errno) << std::endl;
+            return false;
+        }
+        return true;
+
+    }else{
+        return false;
+    }
+
+
+
+
+}
 
 /*============================================================================*/
 /*  @brief      Add ipcserver to epoll master
@@ -23,22 +49,22 @@ sint32 EpollServer::Epoll_Create(void)
  *      @retval     add epoll fd result
 */
 /*============================================================================*/ 
-boolean EpollServer::Epoll_AddEvent(IPCServer&& ipcserver)
-{
-    struct epoll_event  ev;
-    ev.events   = EPOLLIN;
-    ev.data.fd  = ipcserver.un_sock_m;
+// boolean EpollServer::Epoll_AddEvent(IPCServer&& ipcserver)
+// {
+//     struct epoll_event  ev;
+//     ev.events   = EPOLLIN;
+//     ev.data.fd  = ipcserver.un_sock_m;
 
-    ipc_m.push_back(std::move(ipcserver));
-    std::cout << "Add ipcserver to epoll master sockfd is " << ev.data.fd << std::endl;
+//     ipc_m.push_back(std::move(ipcserver));
+//     std::cout << "Add ipcserver to epoll master sockfd is " << ev.data.fd << std::endl;
 
-    while(epoll_ctl(epfd_m, EPOLL_CTL_ADD, ev.data.fd, &ev) == -1)
-    {
-        std::cout << " unix socket fd " << ev.data.fd << " server add epoll list error: " << strerror(errno) << std::endl;
-        return false;
-    }
-    return true;
-}
+//     while(epoll_ctl(epfd_m, EPOLL_CTL_ADD, ev.data.fd, &ev) == -1)
+//     {
+//         std::cout << " unix socket fd " << ev.data.fd << " server add epoll list error: " << strerror(errno) << std::endl;
+//         return false;
+//     }
+//     return true;
+// }
 
 /*============================================================================*/
 /*  @brief      Add ipcserver to epoll master 
@@ -49,24 +75,24 @@ boolean EpollServer::Epoll_AddEvent(IPCServer&& ipcserver)
  *      @retval     add epoll fd result
 */
 /*============================================================================*/ 
-boolean EpollServer::Epoll_AddEvent(const IPCServer& ipcserver)
-{
-    struct epoll_event  ev;
-    ev.events   = EPOLLIN;
-    ev.data.fd  = ipcserver.un_sock_m;
+// boolean EpollServer::Epoll_AddEvent(const IPCServer& ipcserver)
+// {
+//     struct epoll_event  ev;
+//     ev.events   = EPOLLIN;
+//     ev.data.fd  = ipcserver.un_sock_m;
 
-    ipc_m.push_back(ipcserver);
+//     ipc_m.push_back(ipcserver);
 
-    std::cout << "Add ipcserver to epoll master sockfd is " << ev.data.fd << std::endl;
-    // epoll_events_map_m[ev.data.fd] = recv_callback;//insert event and callback
+//     std::cout << "Add ipcserver to epoll master sockfd is " << ev.data.fd << std::endl;
+//     // epoll_events_map_m[ev.data.fd] = recv_callback;//insert event and callback
 
-    while(epoll_ctl(epfd_m, EPOLL_CTL_ADD, ev.data.fd, &ev) == -1)
-    {
-        std::cout << " unix socket fd " << ev.data.fd << " server add epoll list error: " << strerror(errno) << std::endl;
-        return false;
-    }
-    return true;
-}
+//     while(epoll_ctl(epfd_m, EPOLL_CTL_ADD, ev.data.fd, &ev) == -1)
+//     {
+//         std::cout << " unix socket fd " << ev.data.fd << " server add epoll list error: " << strerror(errno) << std::endl;
+//         return false;
+//     }
+//     return true;
+// }
 /*============================================================================*/
 /*  @brief      Add clientfd to server's clients vector
  *              Asynchronous and Non Reentrant
@@ -100,18 +126,41 @@ boolean EpollServer::Epoll_AddEvent(sint32 sockfd)
  *                  false:delete instance failed
 */
 /*============================================================================*/ 
- boolean EpollServer::Epoll_DelEvent(const IPCServer& ipcserver)
- {
+//  boolean EpollServer::Epoll_DelEvent(const IPCServer& ipcserver)
+//  {
+//     struct epoll_event  ev;
+//     ev.events   = EPOLLIN;
+//     ev.data.fd  = ipcserver.un_sock_m;
+
+//     for(auto it = ipc_m.begin(); it != ipc_m.end();++it)
+//     {
+//         if((*it).un_sock_m == ipcserver.un_sock_m)//find ipc socketfd
+//         {
+//             std::cout << "delete epoll event for ipcserver: " << (*it).un_sock_m << std::endl;
+//             it = ipc_m.erase(it);     
+//         } 
+//     }
+    
+//     while(epoll_ctl(epfd_m, EPOLL_CTL_DEL, ev.data.fd, &ev) == -1)
+//     {
+//         printf("unix socket fd=%d server del epoll list error: %s",ev.data.fd, strerror(errno));
+//         return false;
+//     }
+//     return true;
+// }
+
+boolean EpollServer::Epoll_DelEvent(IPCServer* ipcserver_ptr)
+{
     struct epoll_event  ev;
     ev.events   = EPOLLIN;
-    ev.data.fd  = ipcserver.un_sock_m;
+    ev.data.fd  = ipcserver_ptr->un_sock_m;
 
-    for(auto it = ipc_m.begin(); it != ipc_m.end();++it)
+    for(auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end();++it)
     {
-        if((*it).un_sock_m == ipcserver.un_sock_m)//find ipc socketfd
+        if((*it)->un_sock_m == ipcserver_ptr->un_sock_m)//find ipc socketfd
         {
-            std::cout << "delete epoll event for ipcserver: " << (*it).un_sock_m << std::endl;
-            it = ipc_m.erase(it);     
+            std::cout << "delete epoll event for ipcserver: " << (*it)->un_sock_m << std::endl;
+            it = ipc_ptr_m.erase(it);     
         } 
     }
     
@@ -122,7 +171,6 @@ boolean EpollServer::Epoll_AddEvent(sint32 sockfd)
     }
     return true;
 }
-
 /*============================================================================*/
 /*  @brief      Genernal function of epoll to wait for events
  *              Asynchronous and Non Reentrant
@@ -163,17 +211,17 @@ sint32 EpollServer::Epoll_Wait(void)
         {
             int32_t fd_idx = evt_m[i].data.fd;
             boolean isaccept = false;
-            for (auto it = ipc_m.begin(); it != ipc_m.end(); ++it)  //根据events事件的fd匹配对应的ipcserver instance
+            for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it)  //根据events事件的fd匹配对应的ipcserver instance
             {
-                if((*it).un_sock_m == fd_idx)
+                if((*it)->un_sock_m == fd_idx)
                 {
-                    clt_sock = (*it).Accept((*it).un_sock_m);//对应ipc server接受客户端连接
+                    clt_sock = (*it)->Accept((*it)->un_sock_m);//对应ipc server接受客户端连接
                     if(clt_sock != -1)
                     {
-                        std::cout << "ipc server " <<  (*it).un_sock_m << " accepted: client sock " << clt_sock << std::endl;
-                        (*it).AddIpcClient(clt_sock);   //对应ipc server加入该client到其容器
-                        (*it).Set_Nonblocking(clt_sock);
-                        (*it).Set_PortReuse(clt_sock);
+                        std::cout << "ipc server " <<  (*it)->un_sock_m << " accepted: client sock " << clt_sock << std::endl;
+                        (*it)->AddIpcClient(clt_sock);   //对应ipc server加入该client到其容器
+                        (*it)->Set_Nonblocking(clt_sock);
+                        (*it)->Set_PortReuse(clt_sock);
                         Epoll_AddEvent(clt_sock);   //将该client fd加入epoll master
                         isaccept = true;            //标记此次循环是否发生建立连接
                     }
@@ -206,13 +254,13 @@ sint32 EpollServer::Epoll_Wait(void)
                     {//socket出现错误，回收对应资源
                         std::cout << "fail to read socket " << strerror(errno) <<std::endl;
                         //Del ipc server client vector
-                        for (auto it = ipc_m.begin(); it != ipc_m.end(); ++it) 
+                        for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) 
                         {
-                            for(auto ipc_client :(*it).ipc_clients_m)
+                            for(auto ipc_client :(*it)->ipc_clients_m)
                             {
                                 if(ipc_client == fd_idx)
                                 {
-                                    (*it).DelIpcClient(ipc_client);
+                                    (*it)->DelIpcClient(ipc_client);
                                 }
                             }
                         }   
@@ -223,13 +271,13 @@ sint32 EpollServer::Epoll_Wait(void)
                 {
                     std::cout<< "client disconnected " << strerror(errno) << std::endl;
                     //Del ipc server client vector
-                    for (auto it = ipc_m.begin(); it != ipc_m.end(); ++it) 
+                    for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) 
                     {
-                        for(auto ipc_client :(*it).ipc_clients_m)
+                        for(auto ipc_client :(*it)->ipc_clients_m)
                         {
                             if(ipc_client == fd_idx)
                             {
-                                (*it).DelIpcClient(ipc_client);//删除对应Ipc中的Client对象
+                                (*it)->DelIpcClient(ipc_client);//删除对应Ipc中的Client对象
                             }
                         }
                     }   
@@ -237,14 +285,17 @@ sint32 EpollServer::Epoll_Wait(void)
                 }
 
                 //由于接收到客户端的消息，根据客户端的fd，找到对应的ipc server,并调用回调函数通知
-                for (auto it = ipc_m.begin(); it != ipc_m.end(); ++it) //遍历ipcserver
+                for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) //遍历ipcserver
                 {
-                    for(auto ipc_client :(*it).ipc_clients_m)
+                    for(auto ipc_client :(*it)->ipc_clients_m)
                     {
                         if(ipc_client == fd_idx)//找到该client所在的ipcserver
                         {
-                            std::cout << "recv from clientfd "  << ipc_client << " to ipcserver " << (*it).un_sock_m  << std::endl;
-                            (*it).StdRecvCallback(fd_idx,buff,recvlen);//调用该ipcserver的接收回调函数
+                            std::cout << "recv from clientfd "  << ipc_client << " to ipcserver " << (*it)->un_sock_m  << std::endl;
+                            if((*it)->StdRecvCallback)
+                                (*it)->StdRecvCallback(fd_idx,buff,recvlen);//调用该ipcserver的接收回调函数
+                            else
+                                std::cout << "ipcserver " << (*it)->un_sock_m <<  " callback ptr null" << std::endl;
                         }
                     }
                 }  
