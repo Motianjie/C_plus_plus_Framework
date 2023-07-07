@@ -2,6 +2,7 @@
 
 EpollServer::~EpollServer()
 {
+    EpollServer_thread_m.join();
     close(epfd_m);
     std::cout << "EpollServer destructor" << std::endl;
 }
@@ -148,7 +149,7 @@ sint32 EpollServer::Epoll_Wait(void)
  {
     std::cout << "Epoll thread created" << std::endl;
     std::string threadName = "Epoll_Thread";
-    EpollServer_thread_m.detach();//
+    // EpollServer_thread_m.detach();//
     pthread_setname_np(pthread_self(), threadName.c_str());
     
     sint32 clt_sock;

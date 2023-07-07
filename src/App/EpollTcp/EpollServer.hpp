@@ -35,8 +35,8 @@ private:
     struct epoll_event evt_m[MAX_EVENTS_M];
     std::thread EpollServer_thread_m;
     std::list<IPCServer> ipc_m;
-    const uint32 RecvBufferSize = 16*1024u;//最大接收数据量
-    const uint32 OneTimeRecvSize = 2*1024u;//每次接收数据量
+    static const uint32 RecvBufferSize = 16*1024u;//最大接收数据量
+    static const uint32 OneTimeRecvSize = 2*1024u;//每次接收数据量
 };
 
 #endif
