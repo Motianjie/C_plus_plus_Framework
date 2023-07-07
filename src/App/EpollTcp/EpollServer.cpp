@@ -258,9 +258,9 @@ sint32 EpollServer::Epoll_Wait(void)
                         {
                             for(auto ipc_client :(*it)->ipc_clients_m)
                             {
-                                if(ipc_client == fd_idx)
+                                if(ipc_client.src_local_sockfd == fd_idx)
                                 {
-                                    (*it)->DelIpcClient(ipc_client);
+                                    (*it)->DelIpcClient(ipc_client.src_local_sockfd);
                                 }
                             }
                         }   
@@ -275,24 +275,30 @@ sint32 EpollServer::Epoll_Wait(void)
                     {
                         for(auto ipc_client :(*it)->ipc_clients_m)
                         {
-                            if(ipc_client == fd_idx)
+                            if(ipc_client.src_local_sockfd == fd_idx)
                             {
-                                (*it)->DelIpcClient(ipc_client);//删除对应Ipc中的Client对象
+                                (*it)->DelIpcClient(ipc_client.src_local_sockfd);//删除对应Ipc中的Client对象
                             }
                         }
                     }   
                     close(fd_idx);//服务端回收对应socket资源
                 }
 
+                //testcase:send to server 
+                #if 1
+                const char* message = "Hello, Server!";
+                ssize_t bytesSent = send(fd_idx, message, strlen(message), 0);
+                #endif
+
                 //由于接收到客户端的消息，根据客户端的fd，找到对应的ipc server,并调用回调函数通知
                 for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) //遍历ipcserver
                 {
                     for(auto ipc_client :(*it)->ipc_clients_m)
                     {
-                        if(ipc_client == fd_idx)//找到该client所在的ipcserver
+                        if(ipc_client.src_local_sockfd == fd_idx)//找到该client所在的ipcserver
                         {
-                            std::cout << "recv from clientfd "  << ipc_client << " to ipcserver " << (*it)->un_sock_m  << std::endl;
-                            if((*it)->StdRecvCallback)
+                            std::cout << "recv from clientfd "  << ipc_client.src_local_sockfd << " to ipcserver " << (*it)->un_sock_m  << std::endl;
+                            if((*it)->StdRecvCallback)//防止ipc server callback nullptr情况
                                 (*it)->StdRecvCallback(fd_idx,buff,recvlen);//调用该ipcserver的接收回调函数
                             else
                                 std::cout << "ipcserver " << (*it)->un_sock_m <<  " callback ptr null" << std::endl;

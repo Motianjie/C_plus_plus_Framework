@@ -137,7 +137,38 @@ sint32 IPCServer::Accept(sint32 socketfd)
 /*============================================================================*/ 
 void IPCServer::AddIpcClient(sint32 clientfd)
 {
-    ipc_clients_m.push_back(clientfd);
+    _CLIENT_INFO_ clientinfo{};
+    clientinfo.src_local_sockfd = clientfd;
+    ipc_clients_m.push_back(clientinfo);
+}
+
+/*============================================================================*/
+/*  @brief      Set client info by clientfd
+                if ipc_client was accepted by ipc server,ipc server will add client fd in clients vector without other info
+ *              Asynchronous and Non Reentrant
+ *  @param
+ *  @return
+ *      @retval     
+*/
+/*============================================================================*/ 
+void IPCServer::SetIpcClientInfo(sint32 clientfd,sint32 src_id,boolean linksta,_CLIENT_LINKWAY_TYPES_ linkway)
+{
+    auto it = std::find_if(ipc_clients_m.begin(), ipc_clients_m.end(),
+    [&](const _CLIENT_INFO_& client){ return client.src_local_sockfd == clientfd;});//lambda 
+
+    if(it != ipc_clients_m.end())
+    {
+        (*it).linksta = linksta;
+        (*it).linkway = linkway;
+        (*it).src_id = src_id;
+        std::cout << "Set client fd " << (*it).src_local_sockfd << " info " << \
+                    " src_id "        << (*it).src_id  << 
+                    " linkway "       << (*it).linkway << 
+                    " linksta "       << (*it).linksta << std::endl;
+    }el
+    {
+        std::cout << "client fd " << clientfd << " not found" << std::endl;
+    }
 }
 
 /*============================================================================*/
@@ -150,16 +181,18 @@ void IPCServer::AddIpcClient(sint32 clientfd)
 /*============================================================================*/ 
 void IPCServer::DelIpcClient(sint32 clientfd)
 {
-    auto it = std::find(ipc_clients_m.begin(), ipc_clients_m.end(), clientfd);
+    // auto it = std::find(ipc_clients_m.begin(), ipc_clients_m.end(), clientfd);
+    auto it = std::find_if(ipc_clients_m.begin(), ipc_clients_m.end(),
+    [&](const _CLIENT_INFO_ client){ return client.src_local_sockfd == clientfd;});
     if(it != ipc_clients_m.end())
     {
-        std::cout << "Delete client fd " << (*it) << std::endl;
+        std::cout << "Delete client fd " << (*it).src_local_sockfd << std::endl;
         ipc_clients_m.erase(it);
     }
 
-    for (sint32 ipc_client : ipc_clients_m)
+    for (auto ipc_client : ipc_clients_m)
     {
-        std::cout << "Current ipc server " << un_sock_m <<  " ipc clients " << ipc_client << std::endl;
+        std::cout << "Current ipc server " << un_sock_m <<  " ipc clients " << ipc_client.src_local_sockfd << std::endl;
     }
 }
 

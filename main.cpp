@@ -100,7 +100,7 @@ void EpollTcp_Test()
 
     // server->Epoll_AddEvent(std::move(ipc1));
     // server->Epoll_AddEvent(std::move(ipc2));
-    server->Epoll_DelEvent(&ipc1);
+    // server->Epoll_DelEvent(&ipc1);
     // server->Epoll_DelEvent(ipc2);
 }
 
