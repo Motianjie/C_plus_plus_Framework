@@ -165,7 +165,7 @@ void IPCServer::SetIpcClientInfo(sint32 clientfd,sint32 src_id,boolean linksta,_
                     " src_id "        << (*it).src_id  << 
                     " linkway "       << (*it).linkway << 
                     " linksta "       << (*it).linksta << std::endl;
-    }el
+    }else
     {
         std::cout << "client fd " << clientfd << " not found" << std::endl;
     }
