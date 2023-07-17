@@ -5,17 +5,17 @@
 #include <spdlog/spdlog.h>
 
 /// @brief Interface of Observer of Observer mode
-class observer
+class Observer
 {
 public:
     /// @brief Constructor
-    observer(void) 
+    Observer(void) 
     {
         spdlog::info("observer constructor");
     };
 
     /// @brief Destructor
-    virtual ~observer()
+    virtual ~Observer()
     {
         spdlog::info("observer destrcutor");
     };

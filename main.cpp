@@ -152,32 +152,30 @@ int main(int argc, char **argv)
     // pid_t pid = getpid();
     // std::cout << "当前进程的PID: " << pid << std::endl;
     // pthread_setname_np(pthread_self(), "Main Thread");
-    EpollTcp_Test();
-    while(1)
-    {
-        sleep(1);
-    }
+    // EpollTcp_Test();
+    // while(1)
+    // {
+    //     sleep(1);
+    // }
     // json_test();
     // spdlog_test();
     // log_test();
-    // ConcreteObserver_0* pobserver_0 = ConcreteObserver_0::get_instance();
-    // ConcreteObserver_0* pobserver_1 = ConcreteObserver_0::get_instance();
+    std::shared_ptr<Observer> pobserver_0(ConcreteObserver_0::get_instance());
 
-    // ConcreteSubject_0* subject = ConcreteSubject_0::get_instance();
+    std::shared_ptr<Subject> subject = ConcreteSubject_0::get_instance();
 
-    // subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
-    // subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
-    // subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
-    // subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
-
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
+    
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
+    
 #ifdef UNREGISTER_TEST
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_0);
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_1);
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_0);
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_1);
 #endif
-    // uint8_t datatest[5] = {0x00,0x01,0x02,0x03,0x04};
-    // subject->Notify(ConcreteSubject_0::SOA_TYPE_1, datatest, sizeof(datatest));
-    // subject->Notify(ConcreteSubject_0::SOA_TYPE_2, datatest, sizeof(datatest));
+    uint8_t datatest[5] = {0x00,0x01,0x02,0x03,0x04};
+    subject->Notify(ConcreteSubject_0::SOA_TYPE_1, datatest, sizeof(datatest));
+    subject->Notify(ConcreteSubject_0::SOA_TYPE_2, datatest, sizeof(datatest));
     return 0;
 }

@@ -14,15 +14,18 @@
 class ConcreteSubject_0 : public Subject
 {
     public:
-    static ConcreteSubject_0* get_instance()
+     ~ConcreteSubject_0()
     {
-        static ConcreteSubject_0 instance;
-        return &instance;
+        spdlog::info("ConcreteSubject destructor");
+    };
+    static std::shared_ptr<ConcreteSubject_0> get_instance()
+    {
+        static std::shared_ptr<ConcreteSubject_0> instance(new ConcreteSubject_0());
+        return instance;
     }
+    void RegisterSuject(uint16_t DID, const std::shared_ptr<Observer>& pobserver);
 
-    void RegisterSuject(uint16_t DID, observer* pobserver);
-
-    void UnregisterSuject(uint16_t DID,observer* pobserver);
+    void UnregisterSuject(uint16_t DID,const std::shared_ptr<Observer>& pobserver);
 
     void Notify(uint16_t DID , void* data,unsigned int len);
 
@@ -37,14 +40,10 @@ class ConcreteSubject_0 : public Subject
     {
         spdlog::info("ConcreteObserver Constructor");
     }
-    ~ConcreteSubject_0()
-    {
-        spdlog::info("ConcreteSubject destructor");
-    };
     ConcreteSubject_0& operator=(const ConcreteSubject_0&) = delete;
     ConcreteSubject_0(const ConcreteSubject_0&) = delete;
 
-    std::map<uint16_t,std::list<observer*>> Soamap;
+    std::map<uint16_t,std::list<std::shared_ptr<Observer>>> Soamap;
     std::string m_name;
 };
 

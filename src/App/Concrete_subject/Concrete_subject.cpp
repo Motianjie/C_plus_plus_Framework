@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Concrete_subject.hpp"
 
-void ConcreteSubject_0::RegisterSuject(uint16_t DID,observer* pobserver)
+void ConcreteSubject_0::RegisterSuject(uint16_t DID,const std::shared_ptr<Observer>& pobserver)
 {
     if(SOA_TYPE_MAX <= DID || pobserver == nullptr)
     {
@@ -12,7 +12,7 @@ void ConcreteSubject_0::RegisterSuject(uint16_t DID,observer* pobserver)
     this->Soamap[DID].push_back(pobserver);
 }
 
-void ConcreteSubject_0::UnregisterSuject(uint16_t DID,observer* pobserver)
+void ConcreteSubject_0::UnregisterSuject(uint16_t DID,const std::shared_ptr<Observer>& pobserver)
 {
     if(SOA_TYPE_MAX <= DID || pobserver == nullptr)
     {
