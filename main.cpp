@@ -3,8 +3,8 @@
 #include <memory>
 #include <fstream>
 #include "Concrete_subject.hpp"
-#include "Concreteobserverd.hpp"
-#include "Concreteobserverd_sample1.hpp"
+#include "Concreteobserverd_sample_0.hpp"
+#include "Concreteobserverd_sample_1.hpp"
 #include "spdlog/spdlog.h"
 #include "nlohmann/json.hpp"
 #include "spdlog/async.h"
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
     // spdlog_test();
     // log_test();
 
-    std::shared_ptr<Observer> pobserver_0 = ConcreteObserver_0::get_instance();
+    std::shared_ptr<Observer> pobserver_0 = ConcreteObserver_sample_0::get_instance();
     std::shared_ptr<Observer> pobserver_1 = ConcreteObserver_sample_1::get_instance();
 
     std::shared_ptr<Subject> subject = ConcreteSubject_0::get_instance();

@@ -1,15 +1,15 @@
-#include "Concreteobserverd.hpp"
+#include "Concreteobserverd_sample_0.hpp"
 #include <iostream>
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/bin_to_hex.h"
         
 
-ConcreteObserver_0::~ConcreteObserver_0()
+ConcreteObserver_sample_0::~ConcreteObserver_sample_0()
 {
     spdlog::info("[{}] destructor",this->m_name);
 }
 
-void ConcreteObserver_0::Notify(uint16_t DID,void* data,unsigned int len)
+void ConcreteObserver_sample_0::Notify(uint16_t DID,void* data,unsigned int len)
 {
     if(data != NULL && len > 0)
     {
