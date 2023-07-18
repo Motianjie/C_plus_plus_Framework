@@ -8,6 +8,9 @@ set(PROJNAME AG_OBSERVER_MODE)
 set(APP_DIR ${CMAKE_SOURCE_DIR}/src/App/)
 #Middleware path
 set(MIDDLEWARE_DIR ${CMAKE_SOURCE_DIR}/src/Middleware/)
+#Testcase path
+set(TEST_DIR ${CMAKE_SOURCE_DIR}/src/Testcase/)
+
 
 #project name
 project(${PROJNAME})  
@@ -28,6 +31,7 @@ include_directories(${MIDDLEWARE_DIR}Middleware/spdlog)
 include_directories(${MIDDLEWARE_DIR}Middleware/nlohmann)
 include_directories(${MIDDLEWARE_DIR}Middleware)
 include_directories(${MIDDLEWARE_DIR})
+include_directories(${TEST_DIR})
 
 #static library
 add_subdirectory(${APP_DIR}Concrete_observer)
