@@ -11,13 +11,13 @@ public:
     /// @brief Constructor
     Observer(void) 
     {
-        spdlog::info("observer constructor");
+        spdlog::info("[observer] constructor");
     };
 
     /// @brief Destructor
     virtual ~Observer()
     {
-        spdlog::info("observer destrcutor");
+        spdlog::info("[observer] destrcutor");
     };
 
     /// @brief Suject notify observers

@@ -14,10 +14,7 @@
 class ConcreteSubject_0 : public Subject
 {
     public:
-     ~ConcreteSubject_0()
-    {
-        spdlog::info("ConcreteSubject destructor");
-    };
+     ~ConcreteSubject_0();
     static std::shared_ptr<ConcreteSubject_0> get_instance()
     {
         static std::shared_ptr<ConcreteSubject_0> instance(new ConcreteSubject_0());
@@ -38,7 +35,8 @@ class ConcreteSubject_0 : public Subject
     private:
     ConcreteSubject_0()
     {
-        spdlog::info("ConcreteObserver Constructor");
+        m_name = "ConcreteSubject_0";
+        spdlog::info("[{}] default Constructor",this->m_name);
     }
     ConcreteSubject_0& operator=(const ConcreteSubject_0&) = delete;
     ConcreteSubject_0(const ConcreteSubject_0&) = delete;

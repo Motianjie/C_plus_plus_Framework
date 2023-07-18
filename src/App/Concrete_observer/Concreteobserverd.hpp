@@ -20,7 +20,7 @@ private:
     ConcreteObserver_0()
     {
         m_name="ConcreteObserver";
-        spdlog::info("ConcreteObserver default Constructor");
+        spdlog::info("[{}] default Constructor",this->m_name);
     }
     ConcreteObserver_0& operator=(const ConcreteObserver_0&) = delete;
     ConcreteObserver_0(const ConcreteObserver_0&) = delete;

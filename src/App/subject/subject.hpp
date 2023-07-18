@@ -10,13 +10,13 @@ public:
     /// @brief Constructor
     Subject()
     {
-        spdlog::info("Subject constructor");
+        spdlog::info("[Subject] constructor");
     };
 
     /// @brief Destructor
     virtual ~Subject()
     {
-        spdlog::info("Subject destructor");
+        spdlog::info("[Subject] destructor");
     };
 
     /// @brief Interface of Register subject

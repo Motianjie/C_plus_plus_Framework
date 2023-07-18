@@ -1,3 +1,9 @@
+#include "Platform_Types.hpp"
+#include "testcase.hpp"
+#include <iostream>
+#include <functional>
+#include <map>
+
 struct sockettest
 {
     sint32 id;

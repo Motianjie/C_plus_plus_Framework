@@ -4,12 +4,14 @@
 #include <fstream>
 #include "Concrete_subject.hpp"
 #include "Concreteobserverd.hpp"
+#include "Concreteobserverd_sample1.hpp"
 #include "spdlog/spdlog.h"
 #include "nlohmann/json.hpp"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "EpollServer.hpp"
 #include "Platform_Types.hpp"
+#include "testcase.hpp"
 #include <map>
 // #define UNREGISTER_TEST
 
@@ -118,13 +120,16 @@ int main(int argc, char **argv)
     // json_test();
     // spdlog_test();
     // log_test();
+
     std::shared_ptr<Observer> pobserver_0 = ConcreteObserver_0::get_instance();
+    std::shared_ptr<Observer> pobserver_1 = ConcreteObserver_sample_1::get_instance();
 
     std::shared_ptr<Subject> subject = ConcreteSubject_0::get_instance();
 
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
-    
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
     
 #ifdef UNREGISTER_TEST
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_0);

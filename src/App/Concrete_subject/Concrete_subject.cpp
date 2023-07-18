@@ -1,6 +1,11 @@
 #include <iostream>
 #include "Concrete_subject.hpp"
 
+ConcreteSubject_0::~ConcreteSubject_0()
+{
+    spdlog::info("[{}] destructor",this->m_name);
+};
+
 void ConcreteSubject_0::RegisterSuject(uint16_t DID,const std::shared_ptr<Observer>& pobserver)
 {
     if(SOA_TYPE_MAX <= DID || pobserver == nullptr)
