@@ -21,7 +21,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-elide-constructors -g -p
 #set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR})
 
 #include
-include_directories(${APP_DIR}Concrete_observer)
+include_directories(${APP_DIR}Concrete_observer_sample0)
 include_directories(${APP_DIR}Concrete_observer_sample1)
 include_directories(${APP_DIR}Concrete_subject)
 include_directories(${APP_DIR}observer)
@@ -36,7 +36,7 @@ include_directories(${TEST_DIR})
 
 
 #static library
-add_subdirectory(${APP_DIR}Concrete_observer)
+add_subdirectory(${APP_DIR}Concrete_observer_sample0)
 add_subdirectory(${APP_DIR}Concrete_observer_sample1)
 add_subdirectory(${APP_DIR}Concrete_subject)
 add_subdirectory(${APP_DIR}EpollTcp)
@@ -47,7 +47,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 #
 
 #link library
-target_link_libraries(${PROJECT_NAME} Concrete_observer)
+target_link_libraries(${PROJECT_NAME} Concrete_observer_sample0)
 target_link_libraries(${PROJECT_NAME} Concrete_observer_sample1)
 target_link_libraries(${PROJECT_NAME} Concrete_subject)
 target_link_libraries(${PROJECT_NAME} EpollTcp)
