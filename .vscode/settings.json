@@ -59,6 +59,12 @@
         "forward_list": "cpp",
         "any": "cpp",
         "filesystem": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "editor.autoClosingBrackets": "always",
+        "editor.autoClosingOvertype": "always",
+        "C_Cpp.clang_format_sortIncludes": true,
+        "C_Cpp.updateChannel": "Insiders",
+        "C_Cpp.autocomplete.addInclude": false 
     }
 }
+
