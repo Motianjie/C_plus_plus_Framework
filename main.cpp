@@ -13,7 +13,6 @@
 #include "Platform_Types.hpp"
 #include "testcase.hpp"
 #include <map>
-// #define UNREGISTER_TEST
 
 void spdlog_test()
 {
@@ -126,19 +125,29 @@ int main(int argc, char **argv)
 
     std::shared_ptr<Subject> subject = ConcreteSubject_0::get_instance();
 
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, ConcreteObserver_sample_0::get_instance());
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, ConcreteObserver_sample_0::get_instance());
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_3, ConcreteObserver_sample_0::get_instance());
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_4, ConcreteObserver_sample_0::get_instance());
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_3, pobserver_1);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_4, pobserver_1);
     
-#ifdef UNREGISTER_TEST
+#if 0
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_0);
-    subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_1);
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_0);
+    subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_3,pobserver_0);
+    subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_4,pobserver_0);
+    subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_1,pobserver_1);
     subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_2,pobserver_1);
+    subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_3,pobserver_1);
+    subject->UnregisterSuject(ConcreteSubject_0::SOA_TYPE_4,pobserver_1);
 #endif
     uint8_t datatest[5] = {0x00,0x01,0x02,0x03,0x04};
     subject->Notify(ConcreteSubject_0::SOA_TYPE_1, datatest, sizeof(datatest));
     subject->Notify(ConcreteSubject_0::SOA_TYPE_2, datatest, sizeof(datatest));
+    subject->Notify(ConcreteSubject_0::SOA_TYPE_3, datatest, sizeof(datatest));
+    subject->Notify(ConcreteSubject_0::SOA_TYPE_4, datatest, sizeof(datatest));
     return 0;
 }

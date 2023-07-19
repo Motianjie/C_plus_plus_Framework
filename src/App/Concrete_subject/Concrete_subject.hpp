@@ -30,6 +30,8 @@ class ConcreteSubject_0 : public Subject
     {
         SOA_TYPE_1,
         SOA_TYPE_2,
+        SOA_TYPE_3,
+        SOA_TYPE_4,
         SOA_TYPE_MAX,
     };
     private:
