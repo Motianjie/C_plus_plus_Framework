@@ -105,21 +105,8 @@ void EpollTcp_Test()
     // server->Epoll_DelEvent(ipc2);
 }
 
-int main(int argc, char **argv)
+void Observer_test()
 {
-    // test_();
-    // pid_t pid = getpid();
-    // std::cout << "当前进程的PID: " << pid << std::endl;
-    // pthread_setname_np(pthread_self(), "Main Thread");
-    // EpollTcp_Test();
-    // while(1)
-    // {
-    //     sleep(1);
-    // }
-    // json_test();
-    // spdlog_test();
-    // log_test();
-
     std::shared_ptr<Observer> pobserver_0 = ConcreteObserver_sample_0::get_instance();
     std::shared_ptr<Observer> pobserver_1 = ConcreteObserver_sample_1::get_instance();
 
@@ -149,5 +136,23 @@ int main(int argc, char **argv)
     subject->Notify(ConcreteSubject_0::SOA_TYPE_2, datatest, sizeof(datatest));
     subject->Notify(ConcreteSubject_0::SOA_TYPE_3, datatest, sizeof(datatest));
     subject->Notify(ConcreteSubject_0::SOA_TYPE_4, datatest, sizeof(datatest));
+}
+int main(int argc, char **argv)
+{
+    // test_();
+    // pid_t pid = getpid();
+    // std::cout << "当前进程的PID: " << pid << std::endl;
+    // pthread_setname_np(pthread_self(), "Main Thread");
+    // EpollTcp_Test();
+
+    // json_test();
+    // spdlog_test();
+    // log_test();
+    EpollTcp_Test();
+    while(1)
+    {
+        sleep(1);
+    }
+
     return 0;
 }
