@@ -20,22 +20,20 @@ typedef enum
     LINKWAY_MAX,    
 }_CLIENT_LINKWAY_TYPES_;
 
-
-
-
 typedef struct
 {
     uint32 src_id;              /*Source identity*/
     uint32 dst_id;              /*Destination id*/
     uint32 topic_id;            /*topic identity*/
     _COM_CMD_TYPES_ cmd_id;     /*com identity*/
-    uint64 Len;                 /*remain len without header*/
+    uint64 len;                 /*remain len without header*/
 }ALIGN_4BYTES _COM_HEADER_INFO_;
 
 typedef struct
 {
-    _COM_HEADER_INFO_ com_header;
-    uint8* data;
+    _COM_HEADER_INFO_ com_header; /*header/
+    uint8* data;                  /*data ptr*/
+    uint32 datelen;               /*data's len*/
 }ALIGN_4BYTES _COM_MESSAGE_INFO_;
 
 typedef struct

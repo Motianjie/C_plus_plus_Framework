@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <fstream>
+#include <map>
 #include "Concrete_subject.hpp"
 #include "Concreteobserverd_sample_0.hpp"
 #include "Concreteobserverd_sample_1.hpp"
@@ -12,7 +13,7 @@
 #include "EpollServer.hpp"
 #include "Platform_Types.hpp"
 #include "testcase.hpp"
-#include <map>
+#include "MesgHandler.hpp"
 
 void spdlog_test()
 {
@@ -139,6 +140,16 @@ void Observer_test()
 }
 int main(int argc, char **argv)
 {
+    MesgHandler mesghandler;
+    mesghandler.MesgHandler_Action(COM_CMD_LOGIN);
+    mesghandler.MesgHandler_Action(COM_CMD_LOGOUT);
+    mesghandler.MesgHandler_Action(COM_CMD_CHECK);
+    mesghandler.MesgHandler_Action(COM_CMD_FORWARD);
+    mesghandler.MesgHandler_Action(COM_CMD_BROADCAST);
+    mesghandler.MesgHandler_Action((_COM_CMD_TYPES_)6);
+
+
+
     // test_();
     // pid_t pid = getpid();
     // std::cout << "当前进程的PID: " << pid << std::endl;
