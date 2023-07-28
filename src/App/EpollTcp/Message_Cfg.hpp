@@ -1,3 +1,12 @@
+/*
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/Message_Cfg.hpp
+ * @Description:  
+ * @Author: Motianjie 13571951237@163.com
+ * @Version: 0.0.1
+ * @LastEditors: Motianjie 13571951237@163.com
+ * @LastEditTime: 2023-07-28 17:26:24
+ * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
+ */
 #ifndef _MESSAGE_CFG_HPP_
 #define _MESSAGE_CFG_HPP_
 #include "Platform_Types.hpp"
@@ -22,6 +31,7 @@ typedef enum
 
 typedef struct
 {
+    uint8 header ;
     uint32 src_id;              /*Source identity*/
     uint32 dst_id;              /*Destination id*/
     uint32 topic_id;            /*topic identity*/

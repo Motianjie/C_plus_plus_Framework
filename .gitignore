@@ -284,3 +284,4 @@ build/CMakeFiles/Progress/15
 build/src/App/Concrete_observer_sample0/CMakeFiles/Concrete_observer_sample0.dir/compiler_depend.internal
 build/src/App/EpollTcp/CMakeFiles/EpollTcp.dir/MesgHandler.cpp.o
 build/src/App/EpollTcp/CMakeFiles/EpollTcp.dir/MesgHandler.cpp.o.d
+src/App/EpollTcp/Message_Cfg.hpp

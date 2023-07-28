@@ -160,10 +160,10 @@ int main(int argc, char **argv)
     // spdlog_test();
     // log_test();
     EpollTcp_Test();
-    while(1)
-    {
-        sleep(1);
-    }
+    // while(1)
+    // {
+    //     sleep(1);
+    // }
 
     return 0;
 }
