@@ -7,6 +7,7 @@
 #include <vector>
 #include "Message_Cfg.hpp"
 #include "spdlog/spdlog.h"
+#include "message_header.hpp"
 class ACTION
 {
 public:
@@ -106,11 +107,11 @@ class MesgHandler
 public:
     MesgHandler()
     {
-        actionmap_m.emplace(COM_CMD_LOGIN, login_m);
-        actionmap_m.emplace(COM_CMD_LOGOUT, logout_m);
-        actionmap_m.emplace(COM_CMD_CHECK, check_m);
-        actionmap_m.emplace(COM_CMD_FORWARD, forward_m);
-        actionmap_m.emplace(COM_CMD_BROADCAST, broadcast_m);
+        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_LOGIN, login_m);
+        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_LOGOUT, logout_m);
+        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_CHECK, check_m);
+        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_FORWARD, forward_m);
+        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_BROADCAST, broadcast_m);
     }
     
     ~MesgHandler()

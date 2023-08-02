@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-07-28 17:26:24
+ * @LastEditTime: 2023-08-02 17:50:56
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef _MESSAGE_CFG_HPP_
@@ -12,15 +12,13 @@
 #include "Platform_Types.hpp"
 /* communication request command*/
 
-typedef enum 
-{
-    COM_CMD_LOGIN = 1,
-    COM_CMD_LOGOUT,   
-    COM_CMD_CHECK,      /*get connected to COM server tasks type*/ 
-    COM_CMD_FORWARD,    /*forward srcTask data to destTask*/     
-    COM_CMD_BROADCAST,   /*broadcast srcTask data to every tasks*/  
-    COM_CMD_MAX,
-}_COM_CMD_TYPES_;
+typedef uint8 header_t;
+typedef uint32 src_id_t;
+typedef uint32 dst_id_t;
+typedef uint32 topic_id_t;  
+typedef uint32 len_t;
+
+
 
 typedef enum 
 {
@@ -29,22 +27,22 @@ typedef enum
     LINKWAY_MAX,    
 }_CLIENT_LINKWAY_TYPES_;
 
-typedef struct
-{
-    uint8 header ;
-    uint32 src_id;              /*Source identity*/
-    uint32 dst_id;              /*Destination id*/
-    uint32 topic_id;            /*topic identity*/
-    _COM_CMD_TYPES_ cmd_id;     /*com identity*/
-    uint64 len;                 /*remain len without header*/
-}ALIGN_4BYTES _COM_HEADER_INFO_;
+// typedef struct
+// {
+//     uint8 header ;
+//     uint32 src_id;              /*Source identity*/
+//     uint32 dst_id;              /*Destination id*/
+//     uint32 topic_id;            /*topic identity*/
+//     _COM_CMD_TYPES_ cmd_id;     /*com identity*/
+//     uint32 len;                 /*remain len without header*/
+// }ALIGN_4BYTES _COM_HEADER_INFO_;
 
-typedef struct
-{
-    _COM_HEADER_INFO_ com_header; /*header/
-    uint8* data;                  /*data ptr*/
-    uint32 datelen;               /*data's len*/
-}ALIGN_4BYTES _COM_MESSAGE_INFO_;
+// typedef struct
+// {
+//     _COM_HEADER_INFO_ com_header; /*header*/
+//     uint8* data;                  /*data ptr*/
+//     uint32 datelen;               /*data's len*/
+// }ALIGN_4BYTES _COM_MESSAGE_INFO_;
 
 typedef struct
 {
