@@ -27,6 +27,7 @@ include_directories(${APP_DIR}Concrete_subject)
 include_directories(${APP_DIR}observer)
 include_directories(${APP_DIR}subject)
 include_directories(${APP_DIR}EpollTcp)
+include_directories(${APP_DIR}EpollTcp/message)
 include_directories(${APP_DIR}utility)
 include_directories(${APP_DIR})
 include_directories(${MIDDLEWARE_DIR}Middleware/spdlog)
@@ -40,6 +41,7 @@ include_directories(${TEST_DIR})
 add_subdirectory(${APP_DIR}Concrete_observer_sample0)
 add_subdirectory(${APP_DIR}Concrete_observer_sample1)
 add_subdirectory(${APP_DIR}Concrete_subject)
+add_subdirectory(${APP_DIR}EpollTcp/message)
 add_subdirectory(${APP_DIR}EpollTcp)
 add_subdirectory(${TEST_DIR})
 
@@ -48,11 +50,12 @@ add_executable(${PROJECT_NAME} main.cpp)
 #
 
 #link library
+
 target_link_libraries(${PROJECT_NAME} Testcase)
 target_link_libraries(${PROJECT_NAME} Concrete_observer_sample0)
 target_link_libraries(${PROJECT_NAME} Concrete_observer_sample1)
 target_link_libraries(${PROJECT_NAME} Concrete_subject)
+target_link_libraries(${PROJECT_NAME} message)
 target_link_libraries(${PROJECT_NAME} EpollTcp)
-
 
 
