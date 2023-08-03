@@ -4,11 +4,12 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-03 15:42:53
+ * @LastEditTime: 2023-08-03 17:29:13
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #include <iostream>
+#include <sys/prctl.h>
 #include <memory>
 #include <fstream>
 #include <map>
@@ -171,6 +172,9 @@ void Observer_test()
 
 int main(int argc, char **argv)
 {
+    pid_t pid = getpid();
+    std::cout << "当前进程的PID: " << pid << std::endl;
+    pthread_setname_np(pthread_self(), "Main Thread");
     message_handler mesghandler;
     mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGIN);
     mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGOUT);
@@ -186,9 +190,7 @@ int main(int argc, char **argv)
     
 
     // test_();
-    // pid_t pid = getpid();
-    // std::cout << "当前进程的PID: " << pid << std::endl;
-    // pthread_setname_np(pthread_self(), "Main Thread");
+
     // EpollTcp_Test();
 
     // json_test();

@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/message_impl.cpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/message/message_impl.cpp
  * @Description:  
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-03 15:07:45
+ * @LastEditTime: 2023-08-03 17:07:21
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_impl.hpp"
@@ -19,7 +19,13 @@ message_impl::message_impl(const message_header& header_,const uint32 payload_le
 {
     std::memcpy(&message_header_m,&header_,sizeof(message_header));
     payload_len_m = payload_len;
-    payload_m.insert(payload_m.end(), payload, payload + payload_len);
+    try
+    {
+        payload_m.insert(payload_m.end(), payload, payload + payload_len);
+    }catch(const std::bad_alloc& e)
+    {
+        std::cout << "bad alloc" << e.what() << std::endl;
+    }
 }
 
 message_impl::~message_impl()
