@@ -87,7 +87,12 @@ bool deserializer::deserialize(uint32 &_value) {
 bool deserializer::deserialize(uint8 *_data, uint32 _length) {
     if (_length > remaining_)
         return false;
-
+    if (_data == nullptr)
+    {
+        std::cout << "deserialize fail because of nullptr" << std::endl;
+        return false;
+    }
+    
     std::memcpy(_data, &data_[static_cast<std::vector<uint8>::size_type>(position_ - data_.begin())], _length);
     position_ += static_cast<std::vector<uint8>::difference_type>(_length);
     remaining_ -= _length;

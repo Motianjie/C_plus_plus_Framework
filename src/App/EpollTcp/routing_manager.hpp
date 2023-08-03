@@ -20,7 +20,7 @@
 class routing_manager
 {
 public:
-    routing_manager(/* args */);
+    routing_manager();
     ~routing_manager();
 
     std::shared_ptr<serializer> get_serializer();

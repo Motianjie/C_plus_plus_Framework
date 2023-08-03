@@ -60,34 +60,48 @@ void test_()//测试std::map的键可以是自定义的结构体，但是要重�
 
 void test_serializer()
 {
+    boolean Issuccess = false;
     routing_manager routing_manager_instance;
-    message_impl test_message;
-
-    test_message.message_header_m.header = 0x01;
-    test_message.message_header_m.src_id = 0x0203;              /*Source identity*/
-    test_message.message_header_m.dst_id = 0x0405;              /*Destination id*/
-    test_message.message_header_m.topic_id = 0x0607;            /*topic identity*/
-    test_message.message_header_m.cmd_id = _COM_CMD_TYPES_::COM_CMD_FORWARD;     /*com identity*/
-    test_message.message_header_m.len = 0x0809;                 /*remain len without header*/
+    message_header test_header(0x01,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
+    uint8 payload[3] = {0xaa,0xbb,0xcc};//测试消息体payload
+    //构造消息体
+    message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
+    //从序列化器队列中获取一个序列化器
     auto header_serializer = routing_manager_instance.get_serializer();
-    // serializer header_serializer;
-    test_message.message_header_m.serialize(header_serializer);
-    test_message.data_m.push_back(0xAA);
-    test_message.data_m.push_back(0xBB);
-    test_message.data_m.push_back(0xCC);
-    test_message.serialize(header_serializer);
-
+    //序列化头部和payload
+    if(test_message.message_header_m.serialize(header_serializer) && test_message.serialize(header_serializer))
+    {
+        std::cout << "序列化成功" << std::endl;
+    }else
+    {
+        header_serializer->reset();
+        routing_manager_instance.put_serializer(header_serializer);
+        return;
+    }
+    //从反序列化器队列中获取一个反序列化器
     auto header_deserializer = routing_manager_instance.get_deserializer();
+    //将序列化后的二进制数据流放入反序列化器中
     header_deserializer->set_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
-
+    //构造空消息体用以装载反序列化数据
     message_impl test_message_de;
-    test_message_de.deserialize(header_deserializer);
-
+    //反序列化头部和payload
+    if(test_message_de.message_header_m.deserialize(header_deserializer) && test_message_de.deserialize(header_deserializer))
+    {
+        std::cout << "反序列化成功" << std::endl;
+    }else
+    {
+        header_deserializer->reset();
+        routing_manager_instance.put_deserializer(header_deserializer);
+        return;
+    }
+    //完成后清空序列化器和反序列化器
     header_serializer->reset();
     header_deserializer->reset();
+    //将用完的序列化器和反序列化器放回队列中
     routing_manager_instance.put_serializer(header_serializer);
     routing_manager_instance.put_deserializer(header_deserializer);
     std::cout << "test_serializer finsished " << std::endl;
+
 }
 
 
