@@ -1,5 +1,5 @@
-#ifndef __MESGHANDLER__
-#define __MESGHANDLER__
+#ifndef __message_handler__
+#define __message_handler__
 
 #include <iostream>
 #include <unordered_map>
@@ -102,10 +102,10 @@ public:
     void Do_Action() override;
 };
 
-class MesgHandler
+class message_handler
 {
 public:
-    MesgHandler()
+    message_handler()
     {
         actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_LOGIN, login_m);
         actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_LOGOUT, logout_m);
@@ -114,9 +114,9 @@ public:
         actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_BROADCAST, broadcast_m);
     }
     
-    ~MesgHandler()
+    ~message_handler()
     {
-        std::cout << "MesgHandler deconstructed" << std::endl;
+        std::cout << "message_handler deconstructed" << std::endl;
     }
 
     /**
@@ -125,7 +125,7 @@ public:
      * @return {true: action succeeded 
      *          false: action failed}
      */    
-    boolean MesgHandler_Action(const _COM_CMD_TYPES_ com_cmd_types)
+    boolean action(const _COM_CMD_TYPES_ com_cmd_types)
     {
         auto iter = actionmap_m.find(com_cmd_types);
         if (iter != actionmap_m.end())

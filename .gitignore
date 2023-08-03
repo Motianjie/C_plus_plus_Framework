@@ -303,3 +303,5 @@ build/src/App/EpollTcp/CMakeFiles/EpollTcp.dir/serializer.cpp.o
 build/src/App/EpollTcp/CMakeFiles/EpollTcp.dir/serializer.cpp.o.d
 build/src/App/EpollTcp/CMakeFiles/EpollTcp.dir/routing_manager.cpp.o
 build/src/App/EpollTcp/CMakeFiles/EpollTcp.dir/routing_manager.cpp.o.d
+build/src/App/EpollTcp/CMakeFiles/EpollTcp.dir/message_handler.cpp.o
+build/src/App/EpollTcp/CMakeFiles/EpollTcp.dir/message_handler.cpp.o.d

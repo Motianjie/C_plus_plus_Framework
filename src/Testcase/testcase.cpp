@@ -12,7 +12,7 @@
 #include "EpollServer.hpp"
 #include "Platform_Types.hpp"
 #include "testcase.hpp"
-#include "MesgHandler.hpp"
+#include "message_handler.hpp"
 #include "message_header.hpp"
 #include "message_impl.hpp"
 #include "routing_manager.hpp"
@@ -60,7 +60,6 @@ void test_()//测试std::map的键可以是自定义的结构体，但是要重�
 
 void test_serializer()
 {
-    boolean Issuccess = false;
     routing_manager routing_manager_instance;
     message_header test_header(0x01,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
     uint8 payload[3] = {0xaa,0xbb,0xcc};//测试消息体payload

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-03 10:22:58
+ * @LastEditTime: 2023-08-03 15:39:02
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
@@ -17,6 +17,7 @@
 #include <condition_variable>
 #include <mutex>
 
+//该类用以连接messagehandler类
 class routing_manager
 {
 public:
