@@ -48,10 +48,11 @@ add_executable(${PROJECT_NAME} main.cpp)
 #
 
 #link library
+target_link_libraries(${PROJECT_NAME} Testcase)
 target_link_libraries(${PROJECT_NAME} Concrete_observer_sample0)
 target_link_libraries(${PROJECT_NAME} Concrete_observer_sample1)
 target_link_libraries(${PROJECT_NAME} Concrete_subject)
 target_link_libraries(${PROJECT_NAME} EpollTcp)
-target_link_libraries(${PROJECT_NAME} Testcase)
+
 
 

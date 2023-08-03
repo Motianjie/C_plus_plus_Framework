@@ -1,3 +1,12 @@
+/*
+ * @FilePath: /C_plus_plus_Framework/main.cpp
+ * @Description:  
+ * @Author: Motianjie 13571951237@163.com
+ * @Version: 0.0.1
+ * @LastEditors: Motianjie 13571951237@163.com
+ * @LastEditTime: 2023-08-03 11:06:45
+ * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
+ */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #include <iostream>
 #include <memory>
@@ -16,6 +25,7 @@
 #include "MesgHandler.hpp"
 #include "message_header.hpp"
 #include "message_impl.hpp"
+#include "routing_manager.hpp"
 
 void spdlog_test()
 {
@@ -157,28 +167,8 @@ void Observer_test()
     subject->Notify(ConcreteSubject_0::SOA_TYPE_4, datatest, sizeof(datatest));
 }
 
-void test_serializer()
-{
-    message_impl test_message;
 
-    test_message.message_header_m.header = 0x01;
-    test_message.message_header_m.src_id = 0x0203;              /*Source identity*/
-    test_message.message_header_m.dst_id = 0x0405;              /*Destination id*/
-    test_message.message_header_m.topic_id = 0x0607;            /*topic identity*/
-    test_message.message_header_m.cmd_id = _COM_CMD_TYPES_::COM_CMD_FORWARD;     /*com identity*/
-    test_message.message_header_m.len = 0x0809;                 /*remain len without header*/
-    serializer header_serializer;
-    test_message.message_header_m.serialize(&header_serializer);
-    test_message.data_m.push_back(0xAA);
-    test_message.data_m.push_back(0xBB);
-    test_message.data_m.push_back(0xCC);
-    test_message.serialize(&header_serializer);
-    deserializer header_deserializer((uint8*)header_serializer.get_data(), header_serializer.get_size());
 
-    message_impl test_message_de;
-    test_message_de.deserialize(&header_deserializer);
-    std::cout << "test_serializer finsished " << std::endl;
-}
 int main(int argc, char **argv)
 {
     MesgHandler mesghandler;
@@ -189,8 +179,12 @@ int main(int argc, char **argv)
     mesghandler.MesgHandler_Action(_COM_CMD_TYPES_::COM_CMD_BROADCAST);
     mesghandler.MesgHandler_Action((_COM_CMD_TYPES_)6);
 
-
+    
+    
     test_serializer();
+    test_serializer_queue();
+    
+
     // test_();
     // pid_t pid = getpid();
     // std::cout << "当前进程的PID: " << pid << std::endl;

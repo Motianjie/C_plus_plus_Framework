@@ -26,7 +26,7 @@ message_header::~message_header()
 
 };
 
-boolean message_header::serialize(serializer *_to) const
+boolean message_header::serialize(std::shared_ptr<serializer> _to) const
 {
     return (0 != _to
             && _to->serialize(header)
@@ -37,7 +37,7 @@ boolean message_header::serialize(serializer *_to) const
             && _to->serialize(len));
 }
 
-boolean message_header::deserialize(deserializer *_from)
+boolean message_header::deserialize(std::shared_ptr<deserializer> _from)
 {
     bool is_successful;
 

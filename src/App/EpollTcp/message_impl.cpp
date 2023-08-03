@@ -1,3 +1,12 @@
+/*
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/message_impl.cpp
+ * @Description:  
+ * @Author: Motianjie 13571951237@163.com
+ * @Version: 0.0.1
+ * @LastEditors: Motianjie 13571951237@163.com
+ * @LastEditTime: 2023-08-03 10:58:41
+ * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
+ */
 #include "message_impl.hpp"
 
 message_impl::message_impl() :  len_m(0u),
@@ -9,14 +18,14 @@ message_impl::~message_impl()
 {}
 
 
-boolean message_impl::serialize(serializer *_to)const
+boolean message_impl::serialize(std::shared_ptr<serializer> _to)const
 {
     return (0 != _to && 
            _to->serialize((uint32)this->data_m.size()) &&
            _to->serialize(this->data_m.data(), this->data_m.size()));
 }
 
-boolean message_impl::deserialize(deserializer *_from)
+boolean message_impl::deserialize(std::shared_ptr<deserializer> _from)
 {
     bool is_successful = true;
 

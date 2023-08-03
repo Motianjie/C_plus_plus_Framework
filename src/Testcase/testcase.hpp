@@ -7,6 +7,7 @@
 
 
 extern void test_();
-
+extern void test_serializer();
+extern void test_serializer_queue();
 
 #endif 

@@ -1,9 +1,21 @@
+#include <iostream>
+#include <memory>
+#include <fstream>
+#include <map>
+#include "Concrete_subject.hpp"
+#include "Concreteobserverd_sample_0.hpp"
+#include "Concreteobserverd_sample_1.hpp"
+#include "spdlog/spdlog.h"
+#include "nlohmann/json.hpp"
+#include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "EpollServer.hpp"
 #include "Platform_Types.hpp"
 #include "testcase.hpp"
-#include <iostream>
-#include <functional>
-#include <map>
-
+#include "MesgHandler.hpp"
+#include "message_header.hpp"
+#include "message_impl.hpp"
+#include "routing_manager.hpp"
 struct sockettest
 {
     sint32 id;
@@ -43,5 +55,67 @@ void test_()//测试std::map的键可以是自定义的结构体，但是要重�
     for(auto maps : maptest)
     {
         maps.second(did,buffer,len);
+    }
+}
+
+void test_serializer()
+{
+    routing_manager routing_manager_instance;
+    message_impl test_message;
+
+    test_message.message_header_m.header = 0x01;
+    test_message.message_header_m.src_id = 0x0203;              /*Source identity*/
+    test_message.message_header_m.dst_id = 0x0405;              /*Destination id*/
+    test_message.message_header_m.topic_id = 0x0607;            /*topic identity*/
+    test_message.message_header_m.cmd_id = _COM_CMD_TYPES_::COM_CMD_FORWARD;     /*com identity*/
+    test_message.message_header_m.len = 0x0809;                 /*remain len without header*/
+    auto header_serializer = routing_manager_instance.get_serializer();
+    // serializer header_serializer;
+    test_message.message_header_m.serialize(header_serializer);
+    test_message.data_m.push_back(0xAA);
+    test_message.data_m.push_back(0xBB);
+    test_message.data_m.push_back(0xCC);
+    test_message.serialize(header_serializer);
+
+    auto header_deserializer = routing_manager_instance.get_deserializer();
+    header_deserializer->set_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+
+    message_impl test_message_de;
+    test_message_de.deserialize(header_deserializer);
+
+    header_serializer->reset();
+    header_deserializer->reset();
+    routing_manager_instance.put_serializer(header_serializer);
+    routing_manager_instance.put_deserializer(header_deserializer);
+    std::cout << "test_serializer finsished " << std::endl;
+}
+
+
+static routing_manager routing_manager_instance;
+void worker()
+{
+    while(1)
+    {
+        routing_manager_instance.get_serializer();
+        std::cout << "get serializer " << std::endl;
+        routing_manager_instance.get_deserializer();
+        std::cout << "get deserializer " << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
+
+void test_serializer_queue()
+{
+    std::thread t(worker);
+    while(1)
+    {
+        std::shared_ptr<serializer> serialinstance;
+        std::shared_ptr<deserializer> deserialinstance;
+ 
+        routing_manager_instance.put_serializer(serialinstance);
+        std::cout << "put serializer " << std::endl;
+        routing_manager_instance.put_deserializer(deserialinstance);
+        std::cout << "put deserializer " << std::endl;
+        sleep(10);
     }
 }

@@ -4,12 +4,13 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-02 17:27:07
+ * @LastEditTime: 2023-08-03 10:56:21
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __MESSAGE_HEADER__
 #define __MESSAGE_HEADER__
 #include "Platform_Types.hpp"
+#include <memory>
 #include "Message_Cfg.hpp"
 #include "serializer.hpp"
 #include "deserializer.hpp"
@@ -33,8 +34,8 @@ public:
 
     ~message_header();
 
-    boolean serialize(serializer *_to) const;
-    boolean deserialize(deserializer *_from);
+    boolean serialize(std::shared_ptr<serializer> _to) const;
+    boolean deserialize(std::shared_ptr<deserializer> _from);
 
 
 public:
