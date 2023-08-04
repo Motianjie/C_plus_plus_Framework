@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 15:32:32
+ * @LastEditTime: 2023-08-04 16:43:51
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
@@ -14,6 +14,7 @@
 #include "deserializer.hpp"
 #include "message_impl.hpp"
 #include "utility.hpp"
+#include "message_handler.hpp"
 #include <memory>
 #include <queue>
 #include <condition_variable>
@@ -45,7 +46,8 @@ public:
     void ParseProtocal();
 
 
-
+    private:
+    message_handler message_handler_m;
 
     private:
     std::queue<std::shared_ptr<serializer>> serializers_;

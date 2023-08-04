@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 15:44:01
+ * @LastEditTime: 2023-08-04 17:19:18
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_manager.hpp"
@@ -23,7 +23,7 @@ routing_manager::routing_manager() : routing_manager_thread_m(std::bind(&routing
 
 routing_manager::~routing_manager()
 {
-    // routing_manager_thread_m.join();
+    routing_manager_thread_m.join();
 }
 
 std::shared_ptr<serializer> routing_manager::get_serializer()
@@ -95,52 +95,48 @@ void routing_manager::ParseProtocal(void)
     {
         pushdata_condition_.wait(it_lock);
     }
+    std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
+    auto headerPos = findProtocolHeader(data_raw_in, header);
+    uint32 distance;
+    if(headerPos != data_raw_in.end())
     {
-        std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
-        {
-            auto headerPos = findProtocolHeader(data_raw_in, header);
-            uint32 distance;
-            if(headerPos != data_raw_in.end())
-            {
-                distance = std::distance(data_raw_in.begin(), headerPos);
-                //std::cout << "Protocol header found at position: " << distance << std::endl;
-            }else
-            {
-                std::cout << "Protocol header not found!" << std::endl;
-                return;
-            }
-
-            auto deserializer_ = this->get_deserializer();
-            headerPos = deserializer_->data_.begin();
-            deserializer_->append_data(data_raw_in.data() + distance,data_raw_in.size() - distance);
-
-            
-            while( (headerPos = findProtocolHeader(deserializer_->data_, header)) != deserializer_->data_.end() )
-            {
-                //找到协议头
-                static uint16 mesg_cnt = 0u;
-                static uint16 mesg_err_cnt = 0u;
-                mesg_cnt++;
-                message_impl message_;
-                if( message_.message_header_m.deserialize(deserializer_) && message_.deserialize(deserializer_) )
-                {
-                    message_.message_header_m.show_header();
-                    message_.show_message();
-                    spdlog::info("message cnt:[{:d}]",mesg_cnt); 
-                }else
-                {
-                    mesg_err_cnt++;
-                    spdlog::error("deserialize error mesg_err_cnt[{:d}]",mesg_err_cnt);
-                }
-                distance = std::distance(deserializer_->data_.begin(),deserializer_->position_);
-                deserializer_->set_data(deserializer_->data_.data() + distance,deserializer_->data_.size() - distance);
-            }
-
-            data_raw_in.clear();
-            deserializer_->reset();
-            this->put_deserializer(deserializer_);
-        }
+        distance = std::distance(data_raw_in.begin(), headerPos);
+        //std::cout << "Protocol header found at position: " << distance << std::endl;
+    }else
+    {
+        std::cout << "Protocol header not found!" << std::endl;
+        return;
     }
+
+    auto deserializer_ = this->get_deserializer();
+    headerPos = deserializer_->data_.begin();
+    deserializer_->append_data(data_raw_in.data() + distance,data_raw_in.size() - distance);
+    
+    while( (headerPos = findProtocolHeader(deserializer_->data_, header)) != deserializer_->data_.end() )
+    {
+        //找到协议头
+        static uint16 mesg_cnt = 0u;
+        static uint16 mesg_err_cnt = 0u;
+        mesg_cnt++;
+        message_impl message_;
+        if( message_.message_header_m.deserialize(deserializer_) && message_.deserialize(deserializer_) )
+        {
+            message_.message_header_m.show_header();
+            message_.show_message();
+            spdlog::info("message cnt:[{:d}]",mesg_cnt); 
+            message_handler_m.put_message(message_);
+        }else
+        {
+            mesg_err_cnt++;
+            spdlog::error("deserialize error mesg_err_cnt[{:d}]",mesg_err_cnt);
+        }
+        distance = std::distance(deserializer_->data_.begin(),deserializer_->position_);
+        deserializer_->set_data(deserializer_->data_.data() + distance,deserializer_->data_.size() - distance);
+    }
+
+    data_raw_in.clear();
+    deserializer_->reset();
+    this->put_deserializer(deserializer_);
 }
 
 
@@ -149,7 +145,7 @@ void routing_manager::routing_manager_thread()
     std::cout << "routing_manager_thread created" << std::endl;
     std::string threadName = "routing_manager_thread";
     pthread_setname_np(pthread_self(), threadName.c_str());
-    routing_manager_thread_m.detach();
+    // routing_manager_thread_m.detach();
     while(1)
     {
         ParseProtocal();

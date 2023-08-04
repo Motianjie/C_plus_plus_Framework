@@ -175,12 +175,20 @@ void test_praseprotocol()
     }
     uint32 tmp = 0x12345678u;
     //压力测试，当没有usleep情况，一直运行测试不通过，待优化。有usleep的情况下，1微秒也可以处理过来
-    for(uint8 i = 0;i< 255;i++)
+    // for(uint8 i = 0;i< 255;i++)
+    // {
+    //     routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
+    //     routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+    //     routing_manager_instance.push_data((uint8*)&tmp,4);
+    //     usleep(10u);
+    // }
+
+    while(1)
     {
-        routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
+        // routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
         routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
-        routing_manager_instance.push_data((uint8*)&tmp,4);
-        usleep(1u);
+        // routing_manager_instance.push_data((uint8*)&tmp,4);
+        usleep(100u);
     }
 
 }

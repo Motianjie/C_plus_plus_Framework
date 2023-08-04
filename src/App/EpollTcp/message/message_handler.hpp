@@ -5,9 +5,11 @@
 #include <unordered_map>
 #include <map>
 #include <vector>
+#include <deque>
 #include "Message_Cfg.hpp"
 #include "spdlog/spdlog.h"
 #include "message_header.hpp"
+#include "message_impl.hpp"
 class ACTION
 {
 public:
@@ -105,18 +107,12 @@ public:
 class message_handler
 {
 public:
-    message_handler()
-    {
-        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_LOGIN, login_m);
-        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_LOGOUT, logout_m);
-        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_CHECK, check_m);
-        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_FORWARD, forward_m);
-        actionmap_m.emplace(_COM_CMD_TYPES_::COM_CMD_BROADCAST, broadcast_m);
-    }
+    message_handler();
     
     ~message_handler()
     {
         std::cout << "message_handler deconstructed" << std::endl;
+        message_handler_thread_m.join();   
     }
 
     /**
@@ -140,6 +136,11 @@ public:
         return true;
     };
 
+    void put_message(const message_impl& message);
+
+    void message_handle();
+    void message_handler_thread();
+
 private:
     LOGIN login_m;
     LOGOUT logout_m;
@@ -147,6 +148,13 @@ private:
     BROADCAST broadcast_m;
     CHECK check_m;
     std::map<const _COM_CMD_TYPES_, ACTION &> actionmap_m;
+
+    std::deque<message_impl> message_deque_m;
+
+    std::condition_variable message_deque_condition;
+    std::mutex message_deque_mutex;
+
+    std::thread message_handler_thread_m;
 };
 
 #endif

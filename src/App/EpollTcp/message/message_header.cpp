@@ -99,3 +99,29 @@ void message_header::set_len(const len_t & len_)
 {
     len_m = len_;
 }
+
+header_t message_header::get_header()
+{
+    return header_m;
+}
+
+src_id_t message_header::get_src_id()
+{
+    return src_id_m;
+}
+dst_id_t message_header::get_dst_id()
+{
+    return dst_id_m;
+}
+topic_id_t message_header::get_topic_id()
+{
+    return topic_id_m;
+}
+_COM_CMD_TYPES_ message_header::get_cmd_id()
+{
+    return cmd_id_m;
+}
+len_t message_header::get_len()
+{
+    return len_m;
+}

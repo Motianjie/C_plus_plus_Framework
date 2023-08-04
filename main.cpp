@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 11:30:33
+ * @LastEditTime: 2023-08-04 16:27:31
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
@@ -175,13 +175,13 @@ int main(int argc, char **argv)
     pid_t pid = getpid();
     std::cout << "当前进程的PID: " << pid << std::endl;
     pthread_setname_np(pthread_self(), "Main Thread");
-    message_handler mesghandler;
-    mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGIN);
-    mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGOUT);
-    mesghandler.action(_COM_CMD_TYPES_::COM_CMD_CHECK);
-    mesghandler.action(_COM_CMD_TYPES_::COM_CMD_FORWARD);
-    mesghandler.action(_COM_CMD_TYPES_::COM_CMD_BROADCAST);
-    mesghandler.action((_COM_CMD_TYPES_)6);
+    // message_handler mesghandler;
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGIN);
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGOUT);
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_CHECK);
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_FORWARD);
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_BROADCAST);
+    // mesghandler.action((_COM_CMD_TYPES_)6);
 
     
     // test_findprotocolheader();

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 14:15:52
+ * @LastEditTime: 2023-08-04 16:07:57
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __MESSAGE_HEADER__
@@ -57,6 +57,13 @@ public:
     void set_topic_id(const topic_id_t & topic_id_);
     void set_cmd_id(const _COM_CMD_TYPES_& cmd_id_);
     void set_len(const len_t & len_);
+
+    header_t get_header();
+    src_id_t get_src_id();
+    dst_id_t get_dst_id();
+    topic_id_t get_topic_id();
+    _COM_CMD_TYPES_ get_cmd_id();
+    len_t get_len();
 
     void show_header() const
     {   
