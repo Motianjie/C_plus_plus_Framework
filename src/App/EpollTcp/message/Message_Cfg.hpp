@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/Message_Cfg.hpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/message/Message_Cfg.hpp
  * @Description:  
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-02 17:50:56
+ * @LastEditTime: 2023-08-03 18:03:32
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef _MESSAGE_CFG_HPP_
@@ -12,7 +12,7 @@
 #include "Platform_Types.hpp"
 /* communication request command*/
 
-typedef uint8 header_t;
+typedef uint32 header_t;
 typedef uint32 src_id_t;
 typedef uint32 dst_id_t;
 typedef uint32 topic_id_t;  

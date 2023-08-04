@@ -43,6 +43,7 @@ add_subdirectory(${APP_DIR}Concrete_observer_sample1)
 add_subdirectory(${APP_DIR}Concrete_subject)
 add_subdirectory(${APP_DIR}EpollTcp/message)
 add_subdirectory(${APP_DIR}EpollTcp)
+add_subdirectory(${APP_DIR}utility)
 add_subdirectory(${TEST_DIR})
 
 #exe file
@@ -57,5 +58,6 @@ target_link_libraries(${PROJECT_NAME} Concrete_observer_sample1)
 target_link_libraries(${PROJECT_NAME} Concrete_subject)
 target_link_libraries(${PROJECT_NAME} message)
 target_link_libraries(${PROJECT_NAME} EpollTcp)
+target_link_libraries(${PROJECT_NAME} utility)
 
 

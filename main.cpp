@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-03 17:29:13
+ * @LastEditTime: 2023-08-04 11:30:33
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
@@ -184,10 +184,10 @@ int main(int argc, char **argv)
     mesghandler.action((_COM_CMD_TYPES_)6);
 
     
-    
-    test_serializer();
-    test_serializer_queue();
-    
+    // test_findprotocolheader();
+    // test_serializer();
+    // test_serializer_queue();
+    test_praseprotocol();
 
     // test_();
 
@@ -196,9 +196,10 @@ int main(int argc, char **argv)
     // json_test();
     // spdlog_test();
     // log_test();
-    EpollTcp_Test();
+    // EpollTcp_Test();
     while(1)
     {
+        std::cout << "main thread" << std::endl;
         sleep(1);
     }
 

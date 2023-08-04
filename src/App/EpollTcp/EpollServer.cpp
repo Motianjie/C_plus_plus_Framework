@@ -290,6 +290,8 @@ sint32 EpollServer::Epoll_Wait(void)
                 ssize_t bytesSent = send(fd_idx, message, strlen(message), 0);
                 #endif
 
+                //传递给routing_manager
+                routing_manager_m.push_data(buff,(uint32)recvlen);
                 //由于接收到客户端的消息，根据客户端的fd，找到对应的ipc server,并调用回调函数通知
                 for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) //遍历ipcserver
                 {

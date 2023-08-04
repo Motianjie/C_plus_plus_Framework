@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/message_header.hpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/message/message_header.hpp
  * @Description:  
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-03 15:10:49
+ * @LastEditTime: 2023-08-04 14:15:52
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __MESSAGE_HEADER__
@@ -14,7 +14,7 @@
 #include "Message_Cfg.hpp"
 #include "serializer.hpp"
 #include "deserializer.hpp"
-
+#include "spdlog/spdlog.h"
 enum class _COM_CMD_TYPES_
 {
     COM_CMD_LOGIN = 1,
@@ -58,8 +58,22 @@ public:
     void set_cmd_id(const _COM_CMD_TYPES_& cmd_id_);
     void set_len(const len_t & len_);
 
+    void show_header() const
+    {   
+        spdlog::info
+        (
+            "Show_message_header header[0x{:02x}] src_id[0x{:02x}] dst_id[0x{:02x}] topic_id[0x{:02x}] cmd_id[0x{:02x}] len[0x{:02x}]",
+            header_m,
+            src_id_m,
+            dst_id_m,
+            topic_id_m,
+            cmd_id_m,
+            len_m
+        );
+    }
+
 private:
-    header_t header_m ;             /*进程间通信头部标识符#*/
+    header_t header_m ;             /*进程间通信头部标识符#$%& 0x23 0x24 0x25 0x26*/
     src_id_t src_id_m;              /*Source identity*/
     dst_id_t dst_id_m;              /*Destination id*/
     topic_id_t topic_id_m;            /*topic identity*/

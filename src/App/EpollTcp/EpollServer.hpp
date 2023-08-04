@@ -1,7 +1,17 @@
+/*
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/EpollServer.hpp
+ * @Description:  
+ * @Author: Motianjie 13571951237@163.com
+ * @Version: 0.0.1
+ * @LastEditors: Motianjie 13571951237@163.com
+ * @LastEditTime: 2023-08-03 17:48:52
+ * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
+ */
 #ifndef _EPOLLSERVER_HPP_
 #define _EPOLLSERVER_HPP_
 #include <sys/epoll.h>
 #include "IPCServer.hpp"
+#include "routing_manager.hpp"
 #include <thread>
 #include <pthread.h>
 #include <map>
@@ -40,6 +50,7 @@ private:
     std::list<IPCServer*> ipc_ptr_m;//存指针，对象的生命周期要控制，不能在运行期间销毁掉，但是能直接操控对象
     static const uint32 RecvBufferSize = 16*1024u;//最大接收数据量
     static const uint32 OneTimeRecvSize = 2*1024u;//每次接收数据量
+    routing_manager routing_manager_m;
 };
 
 #endif

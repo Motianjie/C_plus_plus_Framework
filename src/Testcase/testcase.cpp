@@ -61,7 +61,7 @@ void test_()//测试std::map的键可以是自定义的结构体，但是要重�
 void test_serializer()
 {
     routing_manager routing_manager_instance;
-    message_header test_header(0x01,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
+    message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
     uint8 payload[3] = {0xaa,0xbb,0xcc};//测试消息体payload
     //构造消息体
     message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
@@ -132,3 +132,56 @@ void test_serializer_queue()
         sleep(10);
     }
 }
+
+    std::vector<uint8_t>::iterator test_findProtocolHeader(std::vector<uint8_t>& data, std::vector<uint8_t>& header)
+    {
+        auto headerPos = std::search(data.begin(), data.end(), header.begin(), header.end());
+        return headerPos;
+    }
+
+    void test_findprotocolheader()
+    {
+    // 示例函数：在二进制数据流中查找协议头
+        std::vector<uint8_t> data = { 0x01,0x23, 0x24, 0x25, 0x26, 0x02, 0x03 };
+        std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
+        auto headerPos = test_findProtocolHeader(data, header);
+        if (headerPos != data.end()) {
+            // uint32 distance = std::distance(data.begin(), headerPos);
+            // std::cout << "Protocol header found at position: " << distance << std::endl;
+            std::cout << "Protocol header found at position: " << std::distance(data.begin(), headerPos) << std::endl;
+        } else {
+            std::cout << "Protocol header not found!" << std::endl;
+        }
+    }
+
+void test_praseprotocol()
+{
+    routing_manager routing_manager_instance;
+    message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
+    uint8 payload[3] = {0xaa,0xbb,0xcc};//测试消息体payload
+    //构造消息体
+    message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
+    //从序列化器队列中获取一个序列化器
+    auto header_serializer = routing_manager_instance.get_serializer();
+    //序列化头部和payload
+    if(test_message.message_header_m.serialize(header_serializer) && test_message.serialize(header_serializer))
+    {
+        std::cout << "序列化成功" << std::endl;
+    }else
+    {
+        header_serializer->reset();
+        routing_manager_instance.put_serializer(header_serializer);
+        return;
+    }
+    uint32 tmp = 0x12345678u;
+    //压力测试，当没有usleep情况，一直运行测试不通过，待优化。有usleep的情况下，1微秒也可以处理过来
+    for(uint8 i = 0;i< 255;i++)
+    {
+        routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
+        routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+        routing_manager_instance.push_data((uint8*)&tmp,4);
+        usleep(1u);
+    }
+
+}
+

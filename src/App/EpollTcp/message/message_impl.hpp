@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/message_impl.hpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/message/message_impl.hpp
  * @Description:  
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-03 15:16:06
+ * @LastEditTime: 2023-08-04 13:55:26
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __MESSAGE_IMPL__
@@ -13,7 +13,8 @@
 
 #include "Message_Cfg.hpp"
 #include "message_header.hpp"
-
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/bin_to_hex.h"
 class message_impl
 {
 public:
@@ -32,6 +33,8 @@ public:
      * @return {true: deserialize success, false: deserialize failure}
      */
     boolean deserialize(std::shared_ptr<deserializer> _from);
+
+    void show_message() const;
 
 public:
     message_header message_header_m; //进程间通信消息头

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-03 17:07:21
+ * @LastEditTime: 2023-08-04 14:01:06
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_impl.hpp"
@@ -51,4 +51,9 @@ boolean message_impl::deserialize(std::shared_ptr<deserializer> _from)
         is_successful = _from->deserialize(payload_m.data(),this->payload_len_m);
     }
     return is_successful;
+}
+
+void message_impl::show_message() const
+{
+    spdlog::info("show_message payload_len[{}] payload elements:{}",payload_len_m,spdlog::to_hex(payload_m));
 }
