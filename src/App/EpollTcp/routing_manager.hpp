@@ -4,15 +4,12 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 16:43:51
+ * @LastEditTime: 2023-08-04 17:34:12
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
 #define __ROUTING_MANAGER__
 #include "Platform_Types.hpp"
-#include "serializer.hpp"
-#include "deserializer.hpp"
-#include "message_impl.hpp"
 #include "utility.hpp"
 #include "message_handler.hpp"
 #include <memory>
@@ -21,6 +18,9 @@
 #include <mutex>
 #include <thread>
 
+class message_handler;
+class serializer;
+class deserializer;
 /**
  * @brief: 该类用以连接messagehandler类和EpollServer类
  * 接收来自EpollServer的序列化二进制数据流并在主线程中读取和处理

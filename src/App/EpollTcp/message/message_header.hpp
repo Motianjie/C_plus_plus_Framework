@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 16:07:57
+ * @LastEditTime: 2023-08-04 17:36:46
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __MESSAGE_HEADER__
@@ -15,6 +15,9 @@
 #include "serializer.hpp"
 #include "deserializer.hpp"
 #include "spdlog/spdlog.h"
+
+class serializer;
+class deserializer;
 enum class _COM_CMD_TYPES_
 {
     COM_CMD_LOGIN = 1,
