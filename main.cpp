@@ -1,7 +1,18 @@
+/*
+ * @FilePath: /C_plus_plus_Framework/main.cpp
+ * @Description:  
+ * @Author: Motianjie 13571951237@163.com
+ * @Version: 0.0.1
+ * @LastEditors: Motianjie 13571951237@163.com
+ * @LastEditTime: 2023-08-09 16:28:40
+ * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
+ */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #include <iostream>
+#include <sys/prctl.h>
 #include <memory>
 #include <fstream>
+#include <map>
 #include "Concrete_subject.hpp"
 #include "Concreteobserverd_sample_0.hpp"
 #include "Concreteobserverd_sample_1.hpp"
@@ -12,7 +23,10 @@
 #include "EpollServer.hpp"
 #include "Platform_Types.hpp"
 #include "testcase.hpp"
-#include <map>
+#include "message_handler.hpp"
+#include "message_header.hpp"
+#include "message_impl.hpp"
+#include "routing_manager.hpp"
 
 void spdlog_test()
 {
@@ -79,7 +93,23 @@ void log_test()
 
 static void callback(sint32 clientfd,void* data,uint32 len)
 {
+  struct Message {
+    int number;
+    uint32_t len;
+    void* text;
+};
+
+    Message message;
+    memcpy(&message.number,data,4);
+    memcpy(&message.len,data+4,4);
+    message.text = new uint8[message.len];
+    memcpy(message.text,data+8,message.len);
+    char tmpstr[message.len] = {0};
+    strncpy(tmpstr,(const char*)message.text,message.len);
+    // spdlog::info("recv message number [{:d}] text [{}]", message.number,message.text);
+    std::cout << "recv message number " << message.number << "message text " << tmpstr << std::endl;
     std::cout << "epoll callback clientfd " << clientfd << " len " << len << std::endl;
+    delete[] message.text;
 }
 
 static void callback2(sint32 clientfd,void* data,uint32 len)
@@ -112,10 +142,10 @@ void Observer_test()
 
     std::shared_ptr<Subject> subject = ConcreteSubject_0::get_instance();
 
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, ConcreteObserver_sample_0::get_instance());
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, ConcreteObserver_sample_0::get_instance());
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_3, ConcreteObserver_sample_0::get_instance());
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_4, ConcreteObserver_sample_0::get_instance());
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_3, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_4, pobserver_0);
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_3, pobserver_1);
@@ -137,22 +167,41 @@ void Observer_test()
     subject->Notify(ConcreteSubject_0::SOA_TYPE_3, datatest, sizeof(datatest));
     subject->Notify(ConcreteSubject_0::SOA_TYPE_4, datatest, sizeof(datatest));
 }
+
+
+
 int main(int argc, char **argv)
 {
+    pid_t pid = getpid();
+    std::cout << "当前进程的PID: " << pid << std::endl;
+    pthread_setname_np(pthread_self(), "Main Thread");
+    // message_handler mesghandler;
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGIN);
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGOUT);
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_CHECK);
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_FORWARD);
+    // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_BROADCAST);
+    // mesghandler.action((_COM_CMD_TYPES_)6);
+
+    Observer_test();
+    // test_findprotocolheader();
+    // test_serializer();
+    // test_serializer_queue();
+    // test_praseprotocol();
+
     // test_();
-    // pid_t pid = getpid();
-    // std::cout << "当前进程的PID: " << pid << std::endl;
-    // pthread_setname_np(pthread_self(), "Main Thread");
+
     // EpollTcp_Test();
 
     // json_test();
     // spdlog_test();
     // log_test();
-    EpollTcp_Test();
-    while(1)
-    {
-        sleep(1);
-    }
+    // EpollTcp_Test();
+    // while(1)
+    // {
+    //     std::cout << "main thread" << std::endl;
+    //     sleep(1);
+    // }
 
     return 0;
 }

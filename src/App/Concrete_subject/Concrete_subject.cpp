@@ -1,3 +1,12 @@
+/*
+ * @FilePath: /C_plus_plus_Framework/src/App/Concrete_subject/Concrete_subject.cpp
+ * @Description:  
+ * @Author: Motianjie 13571951237@163.com
+ * @Version: 0.0.1
+ * @LastEditors: Motianjie 13571951237@163.com
+ * @LastEditTime: 2023-08-09 16:21:11
+ * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
+ */
 #include <iostream>
 #include "Concrete_subject.hpp"
 
@@ -24,7 +33,7 @@ void ConcreteSubject_0::UnregisterSuject(uint16_t DID,const std::shared_ptr<Obse
         spdlog::info("Func[{:s}] Line[{:d}] DID over range or nullptr",__FUNCTION__,__LINE__);
         return;
     }
-    this->Soamap[DID].remove(pobserver);
+    this->Soamap[DID].remove_if([&](const std::weak_ptr<Observer>& o) { return o.lock() == pobserver; });
 }
 
 void ConcreteSubject_0::Notify(uint16_t DID ,void* data,unsigned int len)
@@ -33,7 +42,8 @@ void ConcreteSubject_0::Notify(uint16_t DID ,void* data,unsigned int len)
     {
         for(auto it : this->Soamap[DID])
         {
-            it->Notify(DID,data,len);
+            if (auto observerPtr = it.lock())
+                observerPtr->Notify(DID,data,len);
         }
     } 
 }

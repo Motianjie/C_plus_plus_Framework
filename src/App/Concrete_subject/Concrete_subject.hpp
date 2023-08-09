@@ -1,3 +1,12 @@
+/*
+ * @FilePath: /C_plus_plus_Framework/src/App/Concrete_subject/Concrete_subject.hpp
+ * @Description:  
+ * @Author: Motianjie 13571951237@163.com
+ * @Version: 0.0.1
+ * @LastEditors: Motianjie 13571951237@163.com
+ * @LastEditTime: 2023-08-09 11:38:27
+ * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
+ */
 #ifndef __CONCRETE_SUBJECT__HPP__
 #define __CONCRETE_SUBJECT__HPP__
 
@@ -43,7 +52,7 @@ class ConcreteSubject_0 : public Subject
     ConcreteSubject_0& operator=(const ConcreteSubject_0&) = delete;
     ConcreteSubject_0(const ConcreteSubject_0&) = delete;
 
-    std::map<uint16_t,std::list<std::shared_ptr<Observer>>> Soamap;
+    std::map<uint16_t,std::list<std::weak_ptr<Observer>>> Soamap;
     std::string m_name;
 };
 
