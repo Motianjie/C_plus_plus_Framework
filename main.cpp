@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 16:27:31
+ * @LastEditTime: 2023-08-09 16:28:40
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
@@ -142,10 +142,10 @@ void Observer_test()
 
     std::shared_ptr<Subject> subject = ConcreteSubject_0::get_instance();
 
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, ConcreteObserver_sample_0::get_instance());
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, ConcreteObserver_sample_0::get_instance());
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_3, ConcreteObserver_sample_0::get_instance());
-    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_4, ConcreteObserver_sample_0::get_instance());
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_3, pobserver_0);
+    subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_4, pobserver_0);
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_1, pobserver_1);
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_2, pobserver_1);
     subject->RegisterSuject(ConcreteSubject_0::SOA_TYPE_3, pobserver_1);
@@ -183,11 +183,11 @@ int main(int argc, char **argv)
     // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_BROADCAST);
     // mesghandler.action((_COM_CMD_TYPES_)6);
 
-    
+    Observer_test();
     // test_findprotocolheader();
     // test_serializer();
     // test_serializer_queue();
-    test_praseprotocol();
+    // test_praseprotocol();
 
     // test_();
 
@@ -197,11 +197,11 @@ int main(int argc, char **argv)
     // spdlog_test();
     // log_test();
     // EpollTcp_Test();
-    while(1)
-    {
-        std::cout << "main thread" << std::endl;
-        sleep(1);
-    }
+    // while(1)
+    // {
+    //     std::cout << "main thread" << std::endl;
+    //     sleep(1);
+    // }
 
     return 0;
 }
