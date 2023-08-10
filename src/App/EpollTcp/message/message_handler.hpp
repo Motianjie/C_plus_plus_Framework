@@ -6,10 +6,13 @@
 #include <map>
 #include <vector>
 #include <deque>
+#include <functional>
 #include "Message_Cfg.hpp"
 #include "spdlog/spdlog.h"
 #include "message_header.hpp"
 #include "message_impl.hpp"
+class message_impl;
+typedef std::function<void(const message_impl& message)> MessageCallback;
 class ACTION
 {
 public:
@@ -22,8 +25,8 @@ public:
     {
         std::cout << "Action deconstructor" << std::endl;
     }
-
-    virtual void Do_Action() = 0;
+    virtual void Do_Action(message_impl& msg,MessageCallback mesgcbk) = 0;
+    
 };
 
 class LOGIN : public ACTION
@@ -39,7 +42,7 @@ public:
         std::cout << "LOGIN Destructor" << std::endl;
     }
 
-    void Do_Action() override;
+    void Do_Action(message_impl& msg,MessageCallback mesgcbk) override;
 };
 
 class LOGOUT : public ACTION
@@ -55,7 +58,7 @@ public:
         std::cout << "LOGOUT Destructor" << std::endl;
     }
 
-    void Do_Action() override;
+    void Do_Action(message_impl& msg,MessageCallback mesgcbk) override;
 };
 
 class CHECK : public ACTION
@@ -70,7 +73,7 @@ public:
     {
         std::cout << "CHECK deconstructor" << std::endl;
     }
-    void Do_Action() override;
+    void Do_Action(message_impl& msg,MessageCallback mesgcbk) override;
 };
 
 class FORWARD : public ACTION
@@ -85,7 +88,7 @@ public:
     {
         std::cout << "FORWARD deconstructor" << std::endl;
     }
-    void Do_Action() override;
+    void Do_Action(message_impl& msg,MessageCallback mesgcbk) override;
 };
 
 class BROADCAST : public ACTION
@@ -101,7 +104,7 @@ public:
         std::cout << "BROADCAST deconstructor" << std::endl;
     }
 
-    void Do_Action() override;
+    void Do_Action(message_impl& msg,MessageCallback mesgcbk) override;
 };
 
 class message_handler
@@ -121,12 +124,12 @@ public:
      * @return {true: action succeeded 
      *          false: action failed}
      */    
-    boolean action(const _COM_CMD_TYPES_ com_cmd_types)
+    boolean action(const _COM_CMD_TYPES_ com_cmd_types,message_impl& msg)
     {
         auto iter = actionmap_m.find(com_cmd_types);
         if (iter != actionmap_m.end())
         {
-            iter->second.Do_Action();
+            iter->second.Do_Action(msg,action_cbk);
         }
         else
         {
@@ -137,9 +140,11 @@ public:
     };
 
     void put_message(const message_impl& message);
-
+    void put_message_out(const message_impl& message);
     void message_handle();
     void message_handler_thread();
+
+    boolean pop_message(message_impl& mesg);
 
 private:
     LOGIN login_m;
@@ -149,12 +154,17 @@ private:
     CHECK check_m;
     std::map<const _COM_CMD_TYPES_, ACTION &> actionmap_m;
 
-    std::deque<message_impl> message_deque_m;
+    std::deque<message_impl> message_deque_in_m;
+    std::condition_variable message_deque_in_condition;
+    std::mutex message_deque_in_mutex;
 
-    std::condition_variable message_deque_condition;
-    std::mutex message_deque_mutex;
-
+    std::deque<message_impl> message_deque_out_m;
+    std::mutex message_deque_out_mutex;
     std::thread message_handler_thread_m;
+
+    message_impl message_m;
+    MessageCallback action_cbk;
+
 };
 
 #endif

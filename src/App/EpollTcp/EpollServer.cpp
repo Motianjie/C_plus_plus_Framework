@@ -284,11 +284,32 @@ sint32 EpollServer::Epoll_Wait(void)
                     close(fd_idx);//服务端回收对应socket资源
                 }
 
-                //testcase:send to server 
-                #if 1
-                const char* message = "Hello, Server!";
+                //testcase:send to client 
+                #if 0
+                const char* message = "Hello, client!";
                 ssize_t bytesSent = send(fd_idx, message, strlen(message), 0);
                 #endif
+                uint8* data = nullptr;
+                uint32 len = 0;
+                sint32 clientfd = -1;
+                while(routing_manager_m.pop_send_data(clientfd,&data,len))
+                {
+                    if(clientfd != -1 && data!= nullptr && len > 0)
+                    {
+                        ssize_t bytesSent = send(clientfd, data, len, 0);
+                        if(bytesSent == -1)
+                        {
+                            if(errno == EAGAIN || errno == EWOULDBLOCK)
+                            {
+                                //发送缓冲区已满，稍后再尝试发送
+                            }else
+                            {
+                                spdlog::error("send failed");
+                            }
+                        }
+                    }
+                        
+                }
 
                 //传递给routing_manager
                 routing_manager_m.push_data(buff,(uint32)recvlen);

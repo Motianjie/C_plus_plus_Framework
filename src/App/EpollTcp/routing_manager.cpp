@@ -4,14 +4,15 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 17:19:18
+ * @LastEditTime: 2023-08-10 16:26:27
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_manager.hpp"
 
 routing_manager::routing_manager() : routing_manager_thread_m(std::bind(&routing_manager::routing_manager_thread,this)),
                                      position_(data_raw_in.begin()),
-                                     remaining_(0)
+                                     remaining_(0),
+                                     send_len_m(8096)
 {
     uint32 it_max = 5;
     for(int i = 0;i < it_max;++i)
@@ -19,10 +20,12 @@ routing_manager::routing_manager() : routing_manager_thread_m(std::bind(&routing
         serializers_.push(std::make_shared<serializer>());
         deserializers_.push(std::make_shared<deserializer>());
     }
+    send_buff_m = new uint8[send_len_m];
 }
 
 routing_manager::~routing_manager()
 {
+    delete[] send_buff_m;
     routing_manager_thread_m.join();
 }
 
@@ -86,6 +89,124 @@ boolean routing_manager::push_data(const uint8 *data, const uint32 len)
         return false;
     }
     return true;
+}
+
+/**
+ * @description: 需要在此处立即解析头部信息，如果是LOGIN类型，需要注册src id和client id配对的操作
+ * @param {sint32} clientfd
+ * @param {uint8} *data
+ * @param {uint32} len
+ * @return {*}
+ */
+boolean routing_manager::push_data(sint32 clientfd,const uint8 *data, const uint32 len)
+{
+    std::vector<uint8> tmpdata;
+    try
+    {
+        tmpdata.insert(tmpdata.end(),data,data+len);
+    }catch(const std::bad_alloc& e)
+    {
+        std::cout << "bad alloc" << e.what() << std::endl;
+        return false;
+    }
+    std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
+    auto headerPos = findProtocolHeader(tmpdata, header);
+    uint32 distance;
+    if(headerPos != tmpdata.end())
+    {
+        distance = std::distance(tmpdata.begin(), headerPos);
+        //std::cout << "Protocol header found at position: " << distance << std::endl;
+    }else
+    {
+        std::cout << "Protocol header not found!" << std::endl;
+        return false;
+    }
+    auto deserializer_ = this->get_deserializer();
+    headerPos = deserializer_->data_.begin();
+    deserializer_->append_data(tmpdata.data() + distance,tmpdata.size() - distance);
+
+    while( (headerPos = findProtocolHeader(deserializer_->data_, header)) != deserializer_->data_.end() )
+    {
+        //找到协议头
+        static uint16 mesg_cnt = 0u;
+        static uint16 mesg_err_cnt = 0u;
+        mesg_cnt++;
+        message_impl message_;
+        if( message_.message_header_m.deserialize(deserializer_))
+        {
+            message_.message_header_m.show_header();
+            spdlog::info("message cnt:[{:d}]",mesg_cnt); 
+            if(message_.message_header_m.get_cmd_id() == _COM_CMD_TYPES_::COM_CMD_LOGIN)
+            {
+                if(message_.message_header_m.get_topic_id() == (uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ))
+                    this->routing_tables_m.Register(clientfd,message_.message_header_m.get_src_id());
+            }
+            //此处进行匹配
+        }else
+        {
+            mesg_err_cnt++;
+            spdlog::error("deserialize error mesg_err_cnt[{:d}]",mesg_err_cnt);
+        }
+        distance = std::distance(deserializer_->data_.begin(),deserializer_->position_);
+        deserializer_->set_data(deserializer_->data_.data() + distance,deserializer_->data_.size() - distance);
+    }
+
+    data_raw_in.clear();
+    deserializer_->reset();
+    this->put_deserializer(deserializer_);
+    return true;
+}
+
+boolean routing_manager::pop_send_data(sint32& clientfd,uint8** data,uint32& len)
+{
+    std::lock_guard<std::mutex> it_lock(send_buff_mutex_);  
+    if(message_handler_m.pop_message(message_m))
+    {
+        auto serializer = this->get_serializer();
+        //序列化头部和payload
+        if(message_m.message_header_m.serialize(serializer) && message_m.serialize(serializer))
+        {
+            std::cout << "序列化成功" << std::endl;
+        }else
+        {
+            serializer->reset();
+            this->put_serializer(serializer);
+            return false;
+        }
+        
+        //根据dst id去routing_tables匹配对于的客户端的client id，并赋值给入参clientfd
+        if(!routing_tables_m.routing_map(message_m.message_header_m.get_dst_id(),clientfd))
+        {
+            spdlog::warn("send fail:dst_id[0x{:02x}] not login",message_m.message_header_m.get_dst_id());
+            serializer->reset();
+            this->put_serializer(serializer);
+            return false;
+        }
+
+        if((serializer->get_size() < send_len_m) && (send_buff_m!=nullptr))
+        {
+            std::memcpy(send_buff_m,serializer->get_data(),serializer->get_size());
+            *data = send_buff_m;
+            len = serializer->get_size();
+            serializer->reset();
+            this->put_serializer(serializer);
+        }else
+        {
+            serializer->reset();
+            this->put_serializer(serializer);
+            return false;
+        }
+    }else
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void routing_manager::push_message_out(message_impl& mesg)
+{
+    message_handler_m.put_message_out(mesg);
 }
 
 void routing_manager::ParseProtocal(void)

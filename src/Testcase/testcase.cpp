@@ -9,6 +9,8 @@
 #include "nlohmann/json.hpp"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/bin_to_hex.h"
 #include "EpollServer.hpp"
 #include "Platform_Types.hpp"
 #include "testcase.hpp"
@@ -157,10 +159,13 @@ void test_serializer_queue()
 void test_praseprotocol()
 {
     routing_manager routing_manager_instance;
-    message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
+    message_header test_header(0x23242526,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
+    // message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
     uint8 payload[] = {0xaa,0xbb,0xcc,0xdd,0xee,0xff,0x00,0x11,0x12,0x13,0x14,0x15};//测试消息体payload
     //构造消息体
     message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
+
+    std::cout << "send test" << std::endl;
     //从序列化器队列中获取一个序列化器
     auto header_serializer = routing_manager_instance.get_serializer();
     //序列化头部和payload
@@ -183,13 +188,36 @@ void test_praseprotocol()
     //     usleep(10u);
     // }
 
+    //routing_tables测试
+    sint32 client_id = 0x05;
+    routing_manager_instance.push_data(client_id,(uint8*)header_serializer->get_data(), header_serializer->get_size());
+    routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+
+    //send data 测试
+    uint8* data = nullptr;
+    uint32 len;
+    sint32 clientfd =-1;
+    // routing_manager_instance.push_message_out(test_message);
     while(1)
     {
-        // routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
-        routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
-        // routing_manager_instance.push_data((uint8*)&tmp,4);
-        usleep(100u);
+        if(routing_manager_instance.pop_send_data(clientfd,&data,len))
+        {
+            std::vector<uint8> tmpvec;
+            tmpvec.insert(tmpvec.end(),data,data+len);
+            spdlog::info("show_message payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
+            tmpvec.clear();
+        }
+        sleep(1);
     }
+    
+    
+    // while(1)
+    // {
+    //     // routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
+    //     routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+    //     // routing_manager_instance.push_data((uint8*)&tmp,4);
+    //     usleep(100u);
+    // }
 
 }
 

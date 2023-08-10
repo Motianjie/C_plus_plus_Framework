@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 17:36:46
+ * @LastEditTime: 2023-08-10 14:37:04
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __MESSAGE_HEADER__
@@ -18,16 +18,6 @@
 
 class serializer;
 class deserializer;
-enum class _COM_CMD_TYPES_
-{
-    COM_CMD_LOGIN = 1,
-    COM_CMD_LOGOUT,   
-    COM_CMD_CHECK,      /*get connected to COM server tasks type*/ 
-    COM_CMD_FORWARD,    /*forward srcTask data to destTask*/     
-    COM_CMD_BROADCAST,   /*broadcast srcTask data to every tasks*/  
-    COM_CMD_MAX,
-    COM_CMD_UNKNOWN = 255, /*unknown*/
-};
 
 class message_header
 {
