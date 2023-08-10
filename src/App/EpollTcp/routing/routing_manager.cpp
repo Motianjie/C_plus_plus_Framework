@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing_manager.cpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing/routing_manager.cpp
  * @Description:  
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 16:26:27
+ * @LastEditTime: 2023-08-10 19:58:29
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_manager.hpp"
@@ -151,7 +151,7 @@ boolean routing_manager::push_data(sint32 clientfd,const uint8 *data, const uint
         deserializer_->set_data(deserializer_->data_.data() + distance,deserializer_->data_.size() - distance);
     }
 
-    data_raw_in.clear();
+    // data_raw_in.clear();
     deserializer_->reset();
     this->put_deserializer(deserializer_);
     return true;
@@ -186,6 +186,10 @@ boolean routing_manager::pop_send_data(sint32& clientfd,uint8** data,uint32& len
         if((serializer->get_size() < send_len_m) && (send_buff_m!=nullptr))
         {
             std::memcpy(send_buff_m,serializer->get_data(),serializer->get_size());
+            std::vector<uint8> tmpvec;
+            tmpvec.insert(tmpvec.end(),send_buff_m,send_buff_m+serializer->get_size());
+            spdlog::info("show_message payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
+            tmpvec.clear();
             *data = send_buff_m;
             len = serializer->get_size();
             serializer->reset();
@@ -216,16 +220,23 @@ void routing_manager::ParseProtocal(void)
     {
         pushdata_condition_.wait(it_lock);
     }
+
+    if(data_raw_in.size() > 1024*10u)
+    {
+        spdlog::error("data_raw_in over size");
+        data_raw_in.clear();
+        return;
+    }
+
     std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
     auto headerPos = findProtocolHeader(data_raw_in, header);
     uint32 distance;
     if(headerPos != data_raw_in.end())
     {
         distance = std::distance(data_raw_in.begin(), headerPos);
-        //std::cout << "Protocol header found at position: " << distance << std::endl;
     }else
     {
-        std::cout << "Protocol header not found!" << std::endl;
+        // std::cout << "Protocol header not found!" << std::endl;
         return;
     }
 
@@ -270,7 +281,5 @@ void routing_manager::routing_manager_thread()
     while(1)
     {
         ParseProtocal();
-        std::cout << "routing_manager_thread is running" << std::endl;
-        // std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }

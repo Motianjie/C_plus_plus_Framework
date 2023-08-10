@@ -134,7 +134,7 @@ using level_t = std::atomic<int>;
 #define SPDLOG_LEVEL_OFF 6
 
 #if !defined(SPDLOG_ACTIVE_LEVEL)
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #endif
 
 // Log level enum

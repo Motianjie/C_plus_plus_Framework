@@ -4,10 +4,10 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-09 17:17:13
+ * @LastEditTime: 2023-08-10 20:27:48
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #include <iostream>
 #include <sys/prctl.h>
 #include <memory>
@@ -30,7 +30,7 @@
 
 void spdlog_test()
 {
-    spdlog::set_level(spdlog::level::info); // Set global log level to debug
+
     spdlog::info("Welcome to spdlog!");
     spdlog::error("Some error message with arg: {}", 1);
     spdlog::warn("Easy padding in numbers like {:08d}", 12);
@@ -93,23 +93,23 @@ void log_test()
 
 static void callback(sint32 clientfd,void* data,uint32 len)
 {
-  struct Message {
-    int number;
-    uint32_t len;
-    void* text;
-};
+//   struct Message {
+//     int number;
+//     uint32_t len;
+//     void* text;
+// };
 
-    Message message;
-    memcpy(&message.number,data,4);
-    memcpy(&message.len,data+4,4);
-    message.text = new uint8[message.len];
-    memcpy(message.text,data+8,message.len);
-    char tmpstr[message.len] = {0};
-    strncpy(tmpstr,(const char*)message.text,message.len);
+    // Message message;
+    // memcpy(&message.number,data,4);
+    // memcpy(&message.len,data+4,4);
+    // message.text = new uint8[message.len];
+    // memcpy(message.text,data+8,message.len);
+    // char tmpstr[message.len] = {0};
+    // strncpy(tmpstr,(const char*)message.text,message.len);
     // spdlog::info("recv message number [{:d}] text [{}]", message.number,message.text);
-    std::cout << "recv message number " << message.number << "message text " << tmpstr << std::endl;
-    std::cout << "epoll callback clientfd " << clientfd << " len " << len << std::endl;
-    delete[] message.text;
+    // std::cout << "recv message number " << message.number << "message text " << tmpstr << std::endl;
+    // std::cout << "epoll callback clientfd " << clientfd << " len " << len << std::endl;
+    // delete[] message.text;
 }
 
 static void callback2(sint32 clientfd,void* data,uint32 len)
@@ -187,11 +187,11 @@ int main(int argc, char **argv)
     // test_findprotocolheader();
     // test_serializer();
     // test_serializer_queue();
-    test_praseprotocol();
+    // test_praseprotocol();
 
     // test_();
 
-    // EpollTcp_Test();
+    EpollTcp_Test();
 
     // json_test();
     // spdlog_test();
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
     // EpollTcp_Test();
     while(1)
     {
-        std::cout << "main thread" << std::endl;
+        // std::cout << "main thread" << std::endl;
         sleep(1);
     }
 

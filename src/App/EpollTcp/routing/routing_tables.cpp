@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing_tables.cpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing/routing_tables.cpp
  * @Description: 
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 16:13:49
+ * @LastEditTime: 2023-08-10 20:27:32
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_tables.hpp"
@@ -29,7 +29,7 @@ void routing_tables::Register(sint32 clientfd,uint32 src_id)
         }
     }
     routing_tables_m.insert(std::make_pair(clientfd,src_id));
-    spdlog::info("src_id[0x{:02x}] clientfd[0x{:02x}]",src_id,clientfd);
+    spdlog::info("!!!!!!!!!!!!!!!!!!!!src_id[0x{:02x}] clientfd[0x{:02x}] Login!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",src_id,clientfd);
 }
 
 void routing_tables::Unregister(sint32 clientfd)
@@ -67,5 +67,6 @@ boolean routing_tables::routing_map(sint32 dst_id,sint32& clientfd)
             return true;
         }
     }
+    spdlog::error("dst_id[0x{:02x}] not login",dst_id);
     return false;
 }

@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing_manager.hpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing/routing_manager.hpp
  * @Description:  
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 13:38:04
+ * @LastEditTime: 2023-08-10 19:57:50
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
@@ -13,6 +13,8 @@
 #include "utility.hpp"
 #include "message_handler.hpp"
 #include "routing_tables.hpp"
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/bin_to_hex.h"
 #include <memory>
 #include <queue>
 #include <condition_variable>
