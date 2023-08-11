@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 20:27:32
+ * @LastEditTime: 2023-08-11 18:21:01
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_tables.hpp"
@@ -36,11 +36,11 @@ void routing_tables::Unregister(sint32 clientfd)
 {
     if(routing_tables_m.count(clientfd) > 0)
     {
-        spdlog::info("src_id[0x{:02x}] logout",routing_tables_m[clientfd]);
+        spdlog::warn("!!!!!!!!!!!!!!!!!!!!src_id[0x{:02x}] logout!!!!!!!!!!!!!!!!!!!!",routing_tables_m[clientfd]);
         routing_tables_m.erase(clientfd);
     }else
     {
-        spdlog::warn("clientfd[0x{:02x}] is already logout",clientfd);
+        spdlog::warn("!!!!!!!!!!!!!!!!!!!!clientfd[0x{:02x}] is already logout, logout fail!!!!!!!!!!!!!!!!!!!!",clientfd);
     }
 }
 
@@ -51,10 +51,11 @@ void routing_tables::Unregister(uint32 src_id)
         if(pair.second == src_id)
         {
             routing_tables_m.erase(pair.first);
+            spdlog::warn("!!!!!!!!!!!!!!!!!!!!src_id[0x{:02x}] logout!!!!!!!!!!!!!!!!!!!!",src_id);
             return;
         }
     }
-    spdlog::warn("src_id[0x{:02x}] is already logout",src_id);
+    spdlog::error("!!!!!!!!!!!!!!!!!!!!src_id[0x{:02x}] is already logout, logout fail!!!!!!!!!!!!!!!!!!!!",src_id);
 }
 
 boolean routing_tables::routing_map(sint32 dst_id,sint32& clientfd)

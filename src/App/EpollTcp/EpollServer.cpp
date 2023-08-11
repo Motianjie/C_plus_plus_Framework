@@ -244,7 +244,7 @@ void EpollServer::Epoll_Thread_Send(void)
         sint32 act_epoll_fds = Epoll_Wait();
         for(sint32 i = 0; i < act_epoll_fds; ++i)
         {
-            int32_t fd_idx = evt_m[i].data.fd;
+            sint32 fd_idx = evt_m[i].data.fd;
             boolean isaccept = false;
             for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it)  //根据events事件的fd匹配对应的ipcserver instance
             {
@@ -305,6 +305,7 @@ void EpollServer::Epoll_Thread_Send(void)
                 if(tmprecvlen == 0u)//客户端关闭连接
                 {
                     std::cout<< "client disconnected " << strerror(errno) << std::endl;
+                    routing_manager_m.remove_routing(fd_idx);
                     //Del ipc server client vector
                     for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) 
                     {

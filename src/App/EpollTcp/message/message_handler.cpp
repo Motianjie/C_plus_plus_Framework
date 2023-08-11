@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-11 17:14:54
+ * @LastEditTime: 2023-08-11 18:44:47
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_handler.hpp"
@@ -83,6 +83,7 @@ void message_handler::message_handler_thread()
 void LOGIN::Do_Action(message_impl& msg,MessageCallback mesgcbk)
 {
     std::cout << "LOGIN action" << std::endl;
+    //回复LOGIN ACK给客户端
     message_impl resp_message;
     if(msg.message_header_m.get_topic_id() == (uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ))
     {
@@ -112,6 +113,8 @@ void CHECK::Do_Action(message_impl& msg,MessageCallback mesgcbk)
 void FORWARD::Do_Action(message_impl& msg,MessageCallback mesgcbk)
 {
     std::cout << "FORWARD action" << std::endl;
+    //原封不动
+    mesgcbk(msg);
 }
 
 void BROADCAST::Do_Action(message_impl& msg,MessageCallback mesgcbk)

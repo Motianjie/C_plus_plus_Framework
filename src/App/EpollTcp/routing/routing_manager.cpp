@@ -219,6 +219,16 @@ void routing_manager::push_message_out(message_impl& mesg)
     message_handler_m.put_message_out(mesg);
 }
 
+void routing_manager::remove_routing(sint32 clientfd)
+{
+    routing_tables_m.Unregister(clientfd);
+}
+
+void routing_manager::remove_routing(uint32 src_id)
+{
+    routing_tables_m.Unregister(src_id);
+}
+
 void routing_manager::ParseProtocal(void)
 {    
     std::unique_lock<std::mutex> it_lock(pushdata_mutex_);

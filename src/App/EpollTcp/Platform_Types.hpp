@@ -41,7 +41,7 @@
 #define FUNCTION_ON   1
 #define FUNCTION_OFF  0
 
-
+#define DEBUG
 
 #define CPU_TYPE CPU_TYPE_64
 #ifdef __cplusplus

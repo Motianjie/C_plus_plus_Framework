@@ -53,6 +53,9 @@ public:
 
     void push_message_out(message_impl& mesg);
 
+    void remove_routing(sint32 clientfd);
+    void remove_routing(uint32 src_id);
+
     private:
     message_handler message_handler_m;
     routing_tables routing_tables_m;
