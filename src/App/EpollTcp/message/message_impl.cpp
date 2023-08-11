@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 14:01:06
+ * @LastEditTime: 2023-08-11 17:07:56
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_impl.hpp"
@@ -55,5 +55,7 @@ boolean message_impl::deserialize(std::shared_ptr<deserializer> _from)
 
 void message_impl::show_message() const
 {
-    spdlog::info("show_message payload_len[{}] payload elements:{}",payload_len_m,spdlog::to_hex(payload_m));
+#ifdef DEBUG  
+    spdlog::info("show Recv message payload_len[{}] payload elements:{}",payload_len_m,spdlog::to_hex(payload_m));
+#endif
 }

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 14:37:04
+ * @LastEditTime: 2023-08-11 17:07:44
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __MESSAGE_HEADER__
@@ -57,12 +57,13 @@ public:
     topic_id_t get_topic_id();
     _COM_CMD_TYPES_ get_cmd_id();
     len_t get_len();
-
+    
     void show_header() const
-    {   
+    { 
+        #ifdef DEBUG  
         spdlog::info
         (
-            "Show_message_header header[0x{:02x}] src_id[0x{:02x}] dst_id[0x{:02x}] topic_id[0x{:02x}] cmd_id[0x{:02x}] len[0x{:02x}]",
+            "Show Recv message_header header[0x{:02x}] src_id[0x{:02x}] dst_id[0x{:02x}] topic_id[0x{:02x}] cmd_id[0x{:02x}] len[0x{:02x}]",
             header_m,
             src_id_m,
             dst_id_m,
@@ -70,6 +71,7 @@ public:
             cmd_id_m,
             len_m
         );
+        #endif
     }
 
 private:

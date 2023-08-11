@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 20:27:48
+ * @LastEditTime: 2023-08-11 16:52:42
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
@@ -120,9 +120,11 @@ void EpollTcp_Test()
 {
     std::string path("/tmp/localsocket");
     std::string path1("/tmp/localsocket1");
-    EpollServer *server = new EpollServer();
+    // EpollServer *server = new EpollServer();
+    static std::shared_ptr<EpollServer> server = std::make_shared<EpollServer>();
     static IPCServer ipc1(callback,path);
     static IPCServer ipc2(callback2,path1);
+
 
     // server->Epoll_AddEvent(ipc1);
     // server->Epoll_AddEvent(ipc2);

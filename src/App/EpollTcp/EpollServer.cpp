@@ -2,8 +2,8 @@
 
 EpollServer::~EpollServer()
 {
-    EpollServer_thread_m.join();
-    EpollServer_thread_send_m.join();
+    // EpollServer_thread_m.join();
+    // EpollServer_thread_send_m.join();
     close(epfd_m);
     std::cout << "EpollServer destructor" << std::endl;
 }
@@ -232,7 +232,7 @@ void EpollServer::Epoll_Thread_Send(void)
  {
     std::cout << "Epoll thread created" << std::endl;
     std::string threadName = "Epoll_Thread";
-    // EpollServer_thread_m.detach();//
+    EpollServer_thread_m.detach();//
     pthread_setname_np(pthread_self(), threadName.c_str());
     
     sint32 clt_sock;

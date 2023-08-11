@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 16:26:16
+ * @LastEditTime: 2023-08-11 17:14:54
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_handler.hpp"
@@ -60,7 +60,9 @@ void message_handler::message_handle()
         auto message = message_deque_in_m.front();
         this->action(message.message_header_m.get_cmd_id(),message);
         message_deque_in_m.pop_front();
+        #ifdef DEBUG
         spdlog::info("message action cnt[{}]",message_cnt);
+        #endif
     }
 }
 
@@ -69,11 +71,11 @@ void message_handler::message_handler_thread()
     std::cout << "message_handler_thread created" << std::endl;
     std::string threadName = "message_handler_thread";
     pthread_setname_np(pthread_self(), threadName.c_str());
-    // message_handler_thread_m.detach();
+    message_handler_thread_m.detach();
     while(1)
     {
         message_handle();
-        std::cout << "message_handler_thread" << std::endl;
+        // std::cout << "message_handler_thread" << std::endl;
     }
 }
 

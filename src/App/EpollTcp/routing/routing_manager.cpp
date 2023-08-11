@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 19:58:29
+ * @LastEditTime: 2023-08-11 17:15:27
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_manager.hpp"
@@ -20,13 +20,15 @@ routing_manager::routing_manager() : routing_manager_thread_m(std::bind(&routing
         serializers_.push(std::make_shared<serializer>());
         deserializers_.push(std::make_shared<deserializer>());
     }
-    send_buff_m = new uint8[send_len_m];
+    send_buff_m = std::make_unique<uint8[]>(send_len_m);
+    // send_buff_m = new uint8[send_len_m];
+    
 }
 
 routing_manager::~routing_manager()
 {
-    delete[] send_buff_m;
-    routing_manager_thread_m.join();
+    // delete[] send_buff_m;
+    // routing_manager_thread_m.join();
 }
 
 std::shared_ptr<serializer> routing_manager::get_serializer()
@@ -135,7 +137,9 @@ boolean routing_manager::push_data(sint32 clientfd,const uint8 *data, const uint
         if( message_.message_header_m.deserialize(deserializer_))
         {
             message_.message_header_m.show_header();
+            #ifdef DEBUG
             spdlog::info("message cnt:[{:d}]",mesg_cnt); 
+            #endif
             if(message_.message_header_m.get_cmd_id() == _COM_CMD_TYPES_::COM_CMD_LOGIN)
             {
                 if(message_.message_header_m.get_topic_id() == (uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ))
@@ -185,12 +189,14 @@ boolean routing_manager::pop_send_data(sint32& clientfd,uint8** data,uint32& len
 
         if((serializer->get_size() < send_len_m) && (send_buff_m!=nullptr))
         {
-            std::memcpy(send_buff_m,serializer->get_data(),serializer->get_size());
+            std::memcpy(send_buff_m.get(),serializer->get_data(),serializer->get_size());
+            #ifdef DEBUG
             std::vector<uint8> tmpvec;
-            tmpvec.insert(tmpvec.end(),send_buff_m,send_buff_m+serializer->get_size());
-            spdlog::info("show_message payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
+            tmpvec.insert(tmpvec.end(),send_buff_m.get(),send_buff_m.get()+serializer->get_size());
+            spdlog::info("sendmesaage payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
             tmpvec.clear();
-            *data = send_buff_m;
+            #endif
+            *data = send_buff_m.get();
             len = serializer->get_size();
             serializer->reset();
             this->put_serializer(serializer);
@@ -255,7 +261,9 @@ void routing_manager::ParseProtocal(void)
         {
             message_.message_header_m.show_header();
             message_.show_message();
+            #ifdef DEBUG
             spdlog::info("message cnt:[{:d}]",mesg_cnt); 
+            #endif
             message_handler_m.put_message(message_);
         }else
         {
@@ -277,7 +285,7 @@ void routing_manager::routing_manager_thread()
     std::cout << "routing_manager_thread created" << std::endl;
     std::string threadName = "routing_manager_thread";
     pthread_setname_np(pthread_self(), threadName.c_str());
-    // routing_manager_thread_m.detach();
+    routing_manager_thread_m.detach();
     while(1)
     {
         ParseProtocal();

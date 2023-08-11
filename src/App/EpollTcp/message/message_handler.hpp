@@ -115,7 +115,7 @@ public:
     ~message_handler()
     {
         std::cout << "message_handler deconstructed" << std::endl;
-        message_handler_thread_m.join();   
+        // message_handler_thread_m.join();   
     }
 
     /**

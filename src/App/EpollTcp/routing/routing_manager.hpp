@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 19:57:50
+ * @LastEditTime: 2023-08-11 16:58:53
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
@@ -78,7 +78,8 @@ public:
 
     private:
     message_impl message_m;
-    uint8* send_buff_m;
+    // uint8* send_buff_m;
+    std::unique_ptr<uint8[]> send_buff_m;
     uint32 send_len_m;
     std::mutex send_buff_mutex_;
 
