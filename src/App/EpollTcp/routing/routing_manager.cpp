@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-11 17:15:27
+ * @LastEditTime: 2023-08-14 18:10:06
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_manager.hpp"
@@ -263,16 +263,31 @@ void routing_manager::ParseProtocal(void)
     while( (headerPos = findProtocolHeader(deserializer_->data_, header)) != deserializer_->data_.end() )
     {
         //找到协议头
+        static auto startTime = std::chrono::high_resolution_clock::now();
+        static uint16 frame_cnt = 0u;
         static uint16 mesg_cnt = 0u;
         static uint16 mesg_err_cnt = 0u;
         mesg_cnt++;
         message_impl message_;
         if( message_.message_header_m.deserialize(deserializer_) && message_.deserialize(deserializer_) )
         {
+            frame_cnt++;
             message_.message_header_m.show_header();
             message_.show_message();
             #ifdef DEBUG
-            spdlog::info("message cnt:[{:d}]",mesg_cnt); 
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
+            if(duration >= 1000)
+            {
+                spdlog::info("frame_header_recv[{:d}]",frame_cnt);
+                frame_cnt=0u;
+                startTime = currentTime;
+            }
+
+            // spdlog::info("frame header cnt:[{:d}]",mesg_cnt); 
+
+
+            
             #endif
             message_handler_m.put_message(message_);
         }else
@@ -287,6 +302,7 @@ void routing_manager::ParseProtocal(void)
     data_raw_in.clear();
     deserializer_->reset();
     this->put_deserializer(deserializer_);
+    
 }
 
 

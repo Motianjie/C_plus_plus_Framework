@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-11 17:07:44
+ * @LastEditTime: 2023-08-14 18:07:48
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __MESSAGE_HEADER__
@@ -25,6 +25,7 @@ public:
     message_header();
     message_header(const message_header& _header);
     message_header(const header_t &header_,\
+                   const cnt_t &cnt_,\
                    const src_id_t &src_id_,\
                    const dst_id_t &dst_id_,\
                    const topic_id_t & topic_id_,\
@@ -45,6 +46,7 @@ public:
      */    
     boolean deserialize(std::shared_ptr<deserializer> _from);
     void set_header(const header_t & header_);
+    void set_cnt(const cnt_t & cnt_);
     void set_src_id(const src_id_t & src_id_);
     void set_dst_id(const dst_id_t & dst_id_);
     void set_topic_id(const topic_id_t & topic_id_);
@@ -52,6 +54,7 @@ public:
     void set_len(const len_t & len_);
 
     header_t get_header();
+    cnt_t get_cnt();
     src_id_t get_src_id();
     dst_id_t get_dst_id();
     topic_id_t get_topic_id();
@@ -63,8 +66,9 @@ public:
         #ifdef DEBUG  
         spdlog::info
         (
-            "Show Recv message_header header[0x{:02x}] src_id[0x{:02x}] dst_id[0x{:02x}] topic_id[0x{:02x}] cmd_id[0x{:02x}] len[0x{:02x}]",
+            "Show Recv message_header header[0x{:02x}] cnt[0x{:02x}] src_id[0x{:02x}] dst_id[0x{:02x}] topic_id[0x{:02x}] cmd_id[0x{:02x}] len[0x{:02x}]",
             header_m,
+            cnt_m,
             src_id_m,
             dst_id_m,
             topic_id_m,
@@ -76,6 +80,7 @@ public:
 
 private:
     header_t header_m ;             /*进程间通信头部标识符#$%& 0x23 0x24 0x25 0x26*/
+    cnt_t    cnt_m ;
     src_id_t src_id_m;              /*Source identity*/
     dst_id_t dst_id_m;              /*Destination id*/
     topic_id_t topic_id_m;            /*topic identity*/

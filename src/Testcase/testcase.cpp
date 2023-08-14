@@ -63,7 +63,7 @@ void test_()//测试std::map的键可以是自定义的结构体，但是要重�
 void test_serializer()
 {
     routing_manager routing_manager_instance;
-    message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
+    message_header test_header(0x23242526,0,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
     uint8 payload[3] = {0xaa,0xbb,0xcc};//测试消息体payload
     //构造消息体
     message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
@@ -159,7 +159,7 @@ void test_serializer_queue()
 void test_praseprotocol()
 {
     routing_manager routing_manager_instance;
-    message_header test_header(0x23242526,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
+    message_header test_header(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
     // message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
     uint8 payload[] = {0xaa,0xbb,0xcc,0xdd,0xee,0xff,0x00,0x11,0x12,0x13,0x14,0x15};//测试消息体payload
     //构造消息体

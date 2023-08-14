@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-11 18:44:47
+ * @LastEditTime: 2023-08-14 15:42:04
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_handler.hpp"
@@ -48,6 +48,7 @@ boolean message_handler::pop_message(message_impl& mesg)
 void message_handler::message_handle()
 {
     static uint16 message_cnt = 0u;
+    static auto startTime = std::chrono::high_resolution_clock::now();
     std::unique_lock<std::mutex> it_lock(message_deque_in_mutex);
     while(message_deque_in_m.empty())
     {
@@ -59,6 +60,15 @@ void message_handler::message_handle()
         message_cnt++;
         auto message = message_deque_in_m.front();
         this->action(message.message_header_m.get_cmd_id(),message);
+        
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
+        if (duration >= 1000) 
+        {
+            spdlog::info("frame_cnt_recv[{}]",message_cnt);
+            message_cnt=0u;
+            startTime=currentTime;
+        }
         message_deque_in_m.pop_front();
         #ifdef DEBUG
         spdlog::info("message action cnt[{}]",message_cnt);
@@ -88,6 +98,7 @@ void LOGIN::Do_Action(message_impl& msg,MessageCallback mesgcbk)
     if(msg.message_header_m.get_topic_id() == (uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ))
     {
        resp_message.message_header_m.set_header(MESSAGE_HEADER); 
+       resp_message.message_header_m.set_cnt(msg.message_header_m.get_cnt());
        resp_message.message_header_m.set_topic_id((uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_ACK));
        resp_message.message_header_m.set_src_id((src_id_t)_IPC_ID_::_COM_SERVER_);
        resp_message.message_header_m.set_dst_id(msg.message_header_m.get_src_id());

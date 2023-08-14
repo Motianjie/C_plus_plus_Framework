@@ -192,6 +192,8 @@ void EpollServer::Epoll_Thread_Send(void)
 {
     while(1)
     {
+        static auto startTime = std::chrono::high_resolution_clock::now();
+        static uint16 send_frame_cnt = 0;
         uint8* data = nullptr;
         uint32 len = 0;
         sint32 clientfd = -1;
@@ -213,8 +215,31 @@ void EpollServer::Epoll_Thread_Send(void)
                         bytesSent = send(clientfd, data, len, 0);
                     }else
                     {
-                        spdlog::error("send failed");
+                        spdlog::error("send failed {}",std::strerror(errno));
+                        routing_manager_m.remove_routing(clientfd);
+                        //Del ipc server client vector
+                        for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) 
+                        {
+                            for(auto ipc_client :(*it)->ipc_clients_m)
+                            {
+                                if(ipc_client.src_local_sockfd == clientfd)
+                                {
+                                    (*it)->DelIpcClient(ipc_client.src_local_sockfd);
+                                }
+                            }
+                        }   
                     }
+                }else
+                {
+                    send_frame_cnt++;
+                }
+                auto currentTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
+                if(duration >= 1000)
+                {
+                    spdlog::info("frame_cnt_send[{:d}]",send_frame_cnt);
+                    send_frame_cnt=0u;
+                    startTime = currentTime;
                 }
             }  
         }
@@ -288,6 +313,7 @@ void EpollServer::Epoll_Thread_Send(void)
                     }else
                     {//socket出现错误，回收对应资源
                         std::cout << "fail to read socket " << strerror(errno) <<std::endl;
+                        routing_manager_m.remove_routing(fd_idx);
                         //Del ipc server client vector
                         for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) 
                         {

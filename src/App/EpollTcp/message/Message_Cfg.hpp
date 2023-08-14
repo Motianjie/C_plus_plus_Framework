@@ -15,10 +15,12 @@
 #define MESSAGE_HEADER 0x23242526
 
 typedef uint32 header_t;
+typedef uint32 cnt_t;
 typedef uint32 src_id_t;
 typedef uint32 dst_id_t;
 typedef uint32 topic_id_t;  
 typedef uint32 len_t;
+
 
 
 

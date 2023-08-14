@@ -1,6 +1,7 @@
 #include "message_header.hpp"
 
 message_header::message_header()  : header_m(0u),
+                                    cnt_m(0u),
                                     src_id_m(0u),             /*Source identity*/
                                     dst_id_m(0u),              /*Destination id*/
                                     topic_id_m(0u),            /*topic identity*/
@@ -12,6 +13,7 @@ message_header::message_header()  : header_m(0u),
 
 
 message_header::message_header(const message_header& _header) : header_m(_header.header_m),
+                                                                cnt_m(_header.cnt_m),
                                                                 src_id_m(_header.src_id_m),        /*Source identity*/
                                                                 dst_id_m(_header.dst_id_m),        /*Destination id*/
                                                                 topic_id_m(_header.topic_id_m),    /*topic identity*/
@@ -22,6 +24,7 @@ message_header::message_header(const message_header& _header) : header_m(_header
 }
 
  message_header::message_header(const header_t &header_,\
+                   const cnt_t &cnt_t_,\ 
                    const src_id_t &src_id_,\
                    const dst_id_t &dst_id_,\
                    const topic_id_t & topic_id_,\
@@ -29,6 +32,7 @@ message_header::message_header(const message_header& _header) : header_m(_header
                    const len_t & len_)
                    
                    :header_m(header_),
+                    cnt_m(cnt_t_),
                     src_id_m(src_id_),
                     dst_id_m(dst_id_),   
                     topic_id_m(topic_id_),
@@ -47,6 +51,7 @@ boolean message_header::serialize(std::shared_ptr<serializer> _to) const
 {
     return (0 != _to
             && _to->serialize(header_m)
+            && _to->serialize(cnt_m)
             && _to->serialize(src_id_m)
             && _to->serialize(dst_id_m)
             && _to->serialize(topic_id_m)
@@ -60,6 +65,7 @@ boolean message_header::deserialize(std::shared_ptr<deserializer> _from)
 
     is_successful = (0 != _from
             && _from->deserialize(header_m)
+            && _from->deserialize(cnt_m)
             && _from->deserialize(src_id_m)
             && _from->deserialize(dst_id_m)
             && _from->deserialize(topic_id_m)
@@ -73,6 +79,12 @@ boolean message_header::deserialize(std::shared_ptr<deserializer> _from)
 void message_header::set_header(const header_t & header_)
 {
     header_m = header_;
+}
+
+
+void message_header::set_cnt(const cnt_t & cnt_)
+{
+    cnt_m = cnt_;
 }
 
 void message_header::set_src_id(const src_id_t & src_id_)
@@ -103,6 +115,11 @@ void message_header::set_len(const len_t & len_)
 header_t message_header::get_header()
 {
     return header_m;
+}
+
+cnt_t message_header::get_cnt()
+{
+    return cnt_m;
 }
 
 src_id_t message_header::get_src_id()
