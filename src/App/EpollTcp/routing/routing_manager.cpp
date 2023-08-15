@@ -4,15 +4,17 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-14 18:10:06
+ * @LastEditTime: 2023-08-15 17:19:56
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_manager.hpp"
-
+#include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
 routing_manager::routing_manager() : routing_manager_thread_m(std::bind(&routing_manager::routing_manager_thread,this)),
                                      position_(data_raw_in.begin()),
                                      remaining_(0),
-                                     send_len_m(8096)
+                                     send_len_m(8096),
+                                     data_raw_in_max(50*1024u)
 {
     uint32 it_max = 5;
     for(int i = 0;i < it_max;++i)
@@ -79,10 +81,15 @@ boolean routing_manager::push_data(const uint8 *data, const uint32 len)
 {
     if(data == nullptr || len == 0)
         return false;
-
     try
     {
         std::unique_lock<std::mutex> it_lock(pushdata_mutex_);
+        if(data_raw_in.size() > data_raw_in_max)
+        {
+            spdlog::error("data_raw_in over size func[{}] line[{}]",__FUNCTION__,__LINE__);
+            // data_raw_in.clear();
+            return false;
+        }
         data_raw_in.insert(data_raw_in.end(),data,data+len);
         pushdata_condition_.notify_one();
     }catch(const std::bad_alloc& e)
@@ -229,6 +236,19 @@ void routing_manager::remove_routing(uint32 src_id)
     routing_tables_m.Unregister(src_id);
 }
 
+void routing_manager::set_data(const uint8 *_data,  uint32 _length) 
+{
+    if (0 != _data) {
+        data_raw_in.assign(_data, _data + _length);
+        position_ = data_raw_in.begin();
+        remaining_ = static_cast<std::vector<uint8>::size_type>(data_raw_in.end() - position_);
+    } else {
+        data_raw_in.clear();
+        position_ = data_raw_in.end();
+        remaining_ = 0;
+    }
+}
+static auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "/home/thor/Desktop/Reconsitution_C++/log/server_log.txt");
 void routing_manager::ParseProtocal(void)
 {    
     std::unique_lock<std::mutex> it_lock(pushdata_mutex_);
@@ -236,70 +256,66 @@ void routing_manager::ParseProtocal(void)
     {
         pushdata_condition_.wait(it_lock);
     }
-
-    if(data_raw_in.size() > 1024*10u)
-    {
-        spdlog::error("data_raw_in over size");
-        data_raw_in.clear();
-        return;
-    }
-
+    boolean IsRemain = false;
     std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
-    auto headerPos = findProtocolHeader(data_raw_in, header);
-    uint32 distance;
-    if(headerPos != data_raw_in.end())
-    {
-        distance = std::distance(data_raw_in.begin(), headerPos);
-    }else
-    {
-        // std::cout << "Protocol header not found!" << std::endl;
-        return;
-    }
+    // auto headerPos = findProtocolHeader(data_raw_in, header);
+    uint32 distance = 0u;
+    // if(headerPos != data_raw_in.end())
+    // {
+    //     distance = std::distance(data_raw_in.begin(), headerPos);
+    //     //std::cout << "Protocol header found at position: " << distance << std::endl;
+    // }else
+    // {
+    //     std::cout << "Protocol header not found!" << std::endl;
+    //     return;
+    // }
 
     auto deserializer_ = this->get_deserializer();
-    headerPos = deserializer_->data_.begin();
+    auto headerPos = deserializer_->data_.begin();
+
     deserializer_->append_data(data_raw_in.data() + distance,data_raw_in.size() - distance);
     
     while( (headerPos = findProtocolHeader(deserializer_->data_, header)) != deserializer_->data_.end() )
     {
         //找到协议头
-        static auto startTime = std::chrono::high_resolution_clock::now();
-        static uint16 frame_cnt = 0u;
         static uint16 mesg_cnt = 0u;
         static uint16 mesg_err_cnt = 0u;
         mesg_cnt++;
         message_impl message_;
         if( message_.message_header_m.deserialize(deserializer_) && message_.deserialize(deserializer_) )
         {
-            frame_cnt++;
             message_.message_header_m.show_header();
             message_.show_message();
-            #ifdef DEBUG
-            auto currentTime = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
-            if(duration >= 1000)
-            {
-                spdlog::info("frame_header_recv[{:d}]",frame_cnt);
-                frame_cnt=0u;
-                startTime = currentTime;
-            }
-
-            // spdlog::info("frame header cnt:[{:d}]",mesg_cnt); 
-
-
-            
-            #endif
-            message_handler_m.put_message(message_);
+            spdlog::info("message cnt:[{:d}]",mesg_cnt); 
+            if(message_.message_header_m.get_header() == MESSAGE_HEADER)
+                message_handler_m.put_message(message_);
+            else
+                spdlog::error("header mismatch func[{}] line[{d}]",__FUNCTION__,__LINE__);
+            distance = std::distance(deserializer_->data_.begin(),deserializer_->position_);
+            deserializer_->set_data(deserializer_->data_.data() + distance,deserializer_->data_.size() - distance);
         }else
         {
-            mesg_err_cnt++;
-            spdlog::error("deserialize error mesg_err_cnt[{:d}]",mesg_err_cnt);
-        }
-        distance = std::distance(deserializer_->data_.begin(),deserializer_->position_);
-        deserializer_->set_data(deserializer_->data_.data() + distance,deserializer_->data_.size() - distance);
+            spdlog::error("deserialize meet incompelte raw data [{:d} func[{}] line[{}]]",mesg_err_cnt,__FUNCTION__,__LINE__);
+            std::vector<uint8> tmpvec;
+            tmpvec.insert(tmpvec.end(),deserializer_->data_.data(),deserializer_->data_.data() + deserializer_->data_.size());
+            spdlog::error("incompelte raw data elements:{}",spdlog::to_hex(tmpvec));  
+            SPDLOG_LOGGER_INFO(async_file,"incompelte raw data elements:{}",spdlog::to_hex(tmpvec));
+            tmpvec.clear();
+            IsRemain = true;//代表有不完整的帧，需要保留
+            set_data(deserializer_->data_.data(), deserializer_->data_.size());
+            if((++mesg_err_cnt) > 3)//连续3次不完整，全清空
+            {
+                spdlog::error("mesg_err_cnt[{d}] > [{d}] need reset the raw data buff",mesg_err_cnt,3);  
+                IsRemain = false;
+                mesg_err_cnt=0u;
+            }
+            break;
+        } 
     }
-
-    data_raw_in.clear();
+    if(!IsRemain)
+    {
+        data_raw_in.clear();//如果data_raw_in中刚好是整数倍的包数，则全部清空
+    }
     deserializer_->reset();
     this->put_deserializer(deserializer_);
     

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-11 16:52:42
+ * @LastEditTime: 2023-08-15 15:14:21
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
@@ -78,7 +78,7 @@ void log_test()
      *write async log file
      */
     auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "/home/thor/Desktop/Reconsitution_C++/log/async_log.txt");  
-    SPDLOG_LOGGER_INFO(async_file,"test");
+    SPDLOG_LOGGER_INFO(async_file,"test{1}",1);
 
     /*
      *write bin file
@@ -190,7 +190,7 @@ int main(int argc, char **argv)
     // test_serializer();
     // test_serializer_queue();
     // test_praseprotocol();
-
+    // test_exception();
     // test_();
 
     EpollTcp_Test();

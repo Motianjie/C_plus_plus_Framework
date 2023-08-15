@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-14 15:42:04
+ * @LastEditTime: 2023-08-15 16:25:17
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_handler.hpp"
@@ -47,6 +47,9 @@ boolean message_handler::pop_message(message_impl& mesg)
 
 void message_handler::message_handle()
 {
+    static uint32 cnt = 0;
+    static uint32 cnt_expect = 0u;
+    static uint16 frame_cnt;
     static uint16 message_cnt = 0u;
     static auto startTime = std::chrono::high_resolution_clock::now();
     std::unique_lock<std::mutex> it_lock(message_deque_in_mutex);
@@ -59,16 +62,30 @@ void message_handler::message_handle()
     {
         message_cnt++;
         auto message = message_deque_in_m.front();
-        this->action(message.message_header_m.get_cmd_id(),message);
-        
+
+        cnt = message.message_header_m.get_cnt();
+        if(cnt_expect != cnt)
+        {
+            // spdlog::error("cnt mismatch cnt[{:d}] cnt_expect[{:d}]",cnt,cnt_expect);
+        }else
+        {
+            // spdlog::info("cnt match cnt[{:d}] cnt_expect[{:d}]",cnt,cnt_expect);
+        }
+        cnt_expect = ++cnt;
+        if(cnt_expect > 255)
+        {
+            cnt_expect = 0u;
+        }
+        frame_cnt++;
         auto currentTime = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
-        if (duration >= 1000) 
+        if(duration >= 60000)
         {
-            spdlog::info("frame_cnt_recv[{}]",message_cnt);
-            message_cnt=0u;
-            startTime=currentTime;
+            spdlog::error("frame_cnt_recv[{:d}]",frame_cnt);
+            frame_cnt=0u;
+            startTime = currentTime;
         }
+        this->action(message.message_header_m.get_cmd_id(),message);
         message_deque_in_m.pop_front();
         #ifdef DEBUG
         spdlog::info("message action cnt[{}]",message_cnt);

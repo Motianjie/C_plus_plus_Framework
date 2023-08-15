@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-11 16:58:53
+ * @LastEditTime: 2023-08-15 17:22:07
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
@@ -56,6 +56,7 @@ public:
     void remove_routing(sint32 clientfd);
     void remove_routing(uint32 src_id);
 
+    void set_data(const uint8 *_data,  uint32 _length);
     private:
     message_handler message_handler_m;
     routing_tables routing_tables_m;
@@ -78,6 +79,7 @@ public:
     std::vector<uint8> data_raw_in; //存储client发送的二进制数据流
     std::vector<uint8>::iterator position_;
     uint32 remaining_;
+    uint32 data_raw_in_max;
 
     private:
     message_impl message_m;

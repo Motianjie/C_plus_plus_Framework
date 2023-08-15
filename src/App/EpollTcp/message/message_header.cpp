@@ -1,7 +1,7 @@
 #include "message_header.hpp"
 
 message_header::message_header()  : header_m(0u),
-                                    cnt_m(0u),
+                                    cnt_m(0u), 
                                     src_id_m(0u),             /*Source identity*/
                                     dst_id_m(0u),              /*Destination id*/
                                     topic_id_m(0u),            /*topic identity*/
@@ -24,7 +24,7 @@ message_header::message_header(const message_header& _header) : header_m(_header
 }
 
  message_header::message_header(const header_t &header_,\
-                   const cnt_t &cnt_t_,\ 
+                   const cnt_t &cnt_,\
                    const src_id_t &src_id_,\
                    const dst_id_t &dst_id_,\
                    const topic_id_t & topic_id_,\
@@ -32,7 +32,7 @@ message_header::message_header(const message_header& _header) : header_m(_header
                    const len_t & len_)
                    
                    :header_m(header_),
-                    cnt_m(cnt_t_),
+                    cnt_m(cnt_),
                     src_id_m(src_id_),
                     dst_id_m(dst_id_),   
                     topic_id_m(topic_id_),
@@ -62,7 +62,10 @@ boolean message_header::serialize(std::shared_ptr<serializer> _to) const
 boolean message_header::deserialize(std::shared_ptr<deserializer> _from)
 {
     bool is_successful;
-
+    if(_from == 0)
+    {
+        spdlog::error("deserialize header error [{}] line[{}]",__FUNCTION__,__LINE__);
+    }
     is_successful = (0 != _from
             && _from->deserialize(header_m)
             && _from->deserialize(cnt_m)
@@ -71,7 +74,10 @@ boolean message_header::deserialize(std::shared_ptr<deserializer> _from)
             && _from->deserialize(topic_id_m)
             && _from->deserialize((uint32&)cmd_id_m)
             && _from->deserialize(len_m));
-
+    if(!is_successful)
+    {
+        spdlog::error("deserialize header error [{}] line[{}]",__FUNCTION__,__LINE__);
+    }
     return is_successful;
 }
 

@@ -135,26 +135,56 @@ void test_serializer_queue()
     }
 }
 
-    std::vector<uint8_t>::iterator test_findProtocolHeader(std::vector<uint8_t>& data, std::vector<uint8_t>& header)
-    {
-        auto headerPos = std::search(data.begin(), data.end(), header.begin(), header.end());
-        return headerPos;
-    }
+std::vector<uint8_t>::iterator test_findProtocolHeader(std::vector<uint8_t>& data, std::vector<uint8_t>& header)
+{
+    auto headerPos = std::search(data.begin(), data.end(), header.begin(), header.end());
+    return headerPos;
+}
 
-    void test_findprotocolheader()
-    {
-    // 示例函数：在二进制数据流中查找协议头
-        std::vector<uint8_t> data = { 0x01,0x23, 0x24, 0x25, 0x26, 0x02, 0x03 };
-        std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
-        auto headerPos = test_findProtocolHeader(data, header);
-        if (headerPos != data.end()) {
-            // uint32 distance = std::distance(data.begin(), headerPos);
-            // std::cout << "Protocol header found at position: " << distance << std::endl;
-            std::cout << "Protocol header found at position: " << std::distance(data.begin(), headerPos) << std::endl;
-        } else {
-            std::cout << "Protocol header not found!" << std::endl;
-        }
+void test_findprotocolheader()
+{
+// 示例函数：在二进制数据流中查找协议头
+    std::vector<uint8_t> data = { 0x01,0x23, 0x24, 0x25, 0x26, 0x02, 0x03 };
+    std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
+    auto headerPos = test_findProtocolHeader(data, header);
+    if (headerPos != data.end()) {
+        // uint32 distance = std::distance(data.begin(), headerPos);
+        // std::cout << "Protocol header found at position: " << distance << std::endl;
+        std::cout << "Protocol header found at position: " << std::distance(data.begin(), headerPos) << std::endl;
+    } else {
+        std::cout << "Protocol header not found!" << std::endl;
     }
+}
+
+void test_exception()
+{
+    routing_manager routing_manager_instance;
+    message_header test_header(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
+    uint8 payload[] = {0x11,0x12,0x13,0x14,0x15};//测试消息体payload
+    //构造消息体
+    message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
+    auto header_serializer = routing_manager_instance.get_serializer();
+    //序列化头部和payload
+    if(test_message.message_header_m.serialize(header_serializer) && test_message.serialize(header_serializer))
+    {
+        std::cout << "序列化成功" << std::endl;
+    }else
+    {
+        header_serializer->reset();
+        routing_manager_instance.put_serializer(header_serializer);
+        return;
+    }
+    uint8 tmp[] = {0x23,0x24,0x25,0x26,0x00,0x01,0x02};
+    header_serializer->set_data(tmp,sizeof(tmp));
+    routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+    sleep(1);
+    while(1)
+    {
+        sleep(1);
+        routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+    }
+}
+
 
 void test_praseprotocol()
 {
@@ -162,6 +192,7 @@ void test_praseprotocol()
     message_header test_header(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
     // message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
     uint8 payload[] = {0xaa,0xbb,0xcc,0xdd,0xee,0xff,0x00,0x11,0x12,0x13,0x14,0x15};//测试消息体payload
+    
     //构造消息体
     message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
 
@@ -194,21 +225,21 @@ void test_praseprotocol()
     routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
 
     //send data 测试
-    uint8* data = nullptr;
-    uint32 len;
-    sint32 clientfd =-1;
-    // routing_manager_instance.push_message_out(test_message);
-    while(1)
-    {
-        if(routing_manager_instance.pop_send_data(clientfd,&data,len))
-        {
-            std::vector<uint8> tmpvec;
-            tmpvec.insert(tmpvec.end(),data,data+len);
-            spdlog::info("show_message payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
-            tmpvec.clear();
-        }
-        sleep(1);
-    }
+    // uint8* data = nullptr;
+    // uint32 len;
+    // sint32 clientfd =-1;
+    // // routing_manager_instance.push_message_out(test_message);
+    // while(1)
+    // {
+    //     if(routing_manager_instance.pop_send_data(clientfd,&data,len))
+    //     {
+    //         std::vector<uint8> tmpvec;
+    //         tmpvec.insert(tmpvec.end(),data,data+len);
+    //         spdlog::info("show_message payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
+    //         tmpvec.clear();
+    //     }
+    //     sleep(1);
+    // }
     
     
     // while(1)

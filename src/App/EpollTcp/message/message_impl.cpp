@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-11 17:07:56
+ * @LastEditTime: 2023-08-15 16:05:10
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_impl.hpp"
@@ -44,7 +44,9 @@ boolean message_impl::deserialize(std::shared_ptr<deserializer> _from)
 {
     bool is_successful;
     if(0 != _from)
+    {
         is_successful = _from->deserialize(this->payload_len_m);
+    }
     if(is_successful)
     {
         this->payload_m.resize(this->payload_len_m);//需要分配空间，不然data_m.data()是空指针，下方memcpy导致访问空指针
@@ -55,7 +57,7 @@ boolean message_impl::deserialize(std::shared_ptr<deserializer> _from)
 
 void message_impl::show_message() const
 {
-#ifdef DEBUG  
-    spdlog::info("show Recv message payload_len[{}] payload elements:{}",payload_len_m,spdlog::to_hex(payload_m));
-#endif
+    #ifdef DEBUG  
+        spdlog::info("show Recv message payload_len[{}] payload elements:{}",payload_len_m,spdlog::to_hex(payload_m));
+    #endif
 }
