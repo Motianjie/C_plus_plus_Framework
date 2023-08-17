@@ -58,8 +58,8 @@ public:
 
     void set_data(const uint8 *_data,  uint32 _length);
     private:
-    std::shared_ptr<message_handler> message_handler_m;
     std::shared_ptr<routing_tables> routing_tables_m;
+    std::shared_ptr<message_handler> message_handler_m;
 
     private:
     std::queue<std::shared_ptr<serializer>> serializers_;
