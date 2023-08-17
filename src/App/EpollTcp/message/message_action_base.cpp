@@ -4,12 +4,12 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-17 14:08:31
+ * @LastEditTime: 2023-08-17 15:41:17
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_action_base.hpp"
 
-void LOGIN::Do_Action(message_impl& msg)
+void LOGIN::Do_Action(const message_impl& msg)
 {
     std::cout << "LOGIN action" << std::endl;
     //回复LOGIN ACK给客户端
@@ -33,17 +33,17 @@ void LOGIN::Do_Action(message_impl& msg)
 
 }
 
-void LOGOUT::Do_Action(message_impl& msg)
+void LOGOUT::Do_Action(const message_impl& msg)
 {
     std::cout << "LOGOUT action" << std::endl;
 }
 
-void CHECK::Do_Action(message_impl& msg)
+void CHECK::Do_Action(const message_impl& msg)
 {
     std::cout << "CHECK action" << std::endl;
 }
 
-void FORWARD::Do_Action(message_impl& msg)
+void FORWARD::Do_Action(const message_impl& msg)
 {
     std::cout << "FORWARD action" << std::endl;
     //原封不动
@@ -53,7 +53,7 @@ void FORWARD::Do_Action(message_impl& msg)
         spdlog::error("login message handler null put message out failed");
 }
 
-void BROADCAST::Do_Action(message_impl& msg)
+void BROADCAST::Do_Action(const message_impl& msg)
 {
     std::cout << "BROADCAST action" << std::endl;
 }

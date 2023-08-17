@@ -19,7 +19,7 @@ public:
         std::cout << "LOGIN Destructor" << std::endl;
     }
 
-    void Do_Action(message_impl& msg) override;
+    void Do_Action(const message_impl& msg) override;
 
 private:
     std::shared_ptr<routing_tables> routing_tables_m;
@@ -40,7 +40,7 @@ public:
         std::cout << "LOGOUT Destructor" << std::endl;
     }
 
-    void Do_Action(message_impl& msg) override;
+    void Do_Action(const message_impl& msg) override;
 
 private:
     std::shared_ptr<routing_tables> routing_tables_m;
@@ -60,7 +60,7 @@ public:
     {
         std::cout << "CHECK deconstructor" << std::endl;
     }
-    void Do_Action(message_impl& msg) override;
+    void Do_Action(const message_impl& msg) override;
 
 private:
     std::shared_ptr<routing_tables> routing_tables_m;
@@ -80,7 +80,7 @@ public:
     {
         std::cout << "FORWARD deconstructor" << std::endl;
     }
-    void Do_Action(message_impl& msg) override;
+    void Do_Action(const message_impl& msg) override;
 
 private:
     std::shared_ptr<routing_tables> routing_tables_m;
@@ -101,7 +101,7 @@ public:
         std::cout << "BROADCAST deconstructor" << std::endl;
     }
 
-    void Do_Action(message_impl& msg) override;
+    void Do_Action(const message_impl& msg) override;
 
 private:
     std::shared_ptr<routing_tables> routing_tables_m;

@@ -118,33 +118,33 @@ void message_header::set_len(const len_t & len_)
     len_m = len_;
 }
 
-header_t message_header::get_header()
+header_t message_header::get_header() const
 {
     return header_m;
 }
 
-cnt_t message_header::get_cnt()
+cnt_t message_header::get_cnt() const 
 {
     return cnt_m;
 }
 
-src_id_t message_header::get_src_id()
+src_id_t message_header::get_src_id() const 
 {
     return src_id_m;
 }
-dst_id_t message_header::get_dst_id()
+dst_id_t message_header::get_dst_id() const
 {
     return dst_id_m;
 }
-topic_id_t message_header::get_topic_id()
+topic_id_t message_header::get_topic_id() const
 {
     return topic_id_m;
 }
-_COM_CMD_TYPES_ message_header::get_cmd_id()
+_COM_CMD_TYPES_ message_header::get_cmd_id() const
 {
     return cmd_id_m;
 }
-len_t message_header::get_len()
+len_t message_header::get_len() const
 {
     return len_m;
 }
