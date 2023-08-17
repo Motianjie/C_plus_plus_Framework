@@ -4,14 +4,15 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-11 18:21:01
+ * @LastEditTime: 2023-08-16 18:12:10
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_tables.hpp"
 #include "spdlog/spdlog.h"
-
+#include <iostream>
 routing_tables::routing_tables()
 {
+    std::cout<< "" << std::endl;
 }
 
 routing_tables::~routing_tables()

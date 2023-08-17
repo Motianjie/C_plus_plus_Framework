@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-15 17:22:07
+ * @LastEditTime: 2023-08-16 15:11:27
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
@@ -58,8 +58,8 @@ public:
 
     void set_data(const uint8 *_data,  uint32 _length);
     private:
-    message_handler message_handler_m;
-    routing_tables routing_tables_m;
+    std::shared_ptr<message_handler> message_handler_m;
+    std::shared_ptr<routing_tables> routing_tables_m;
 
     private:
     std::queue<std::shared_ptr<serializer>> serializers_;

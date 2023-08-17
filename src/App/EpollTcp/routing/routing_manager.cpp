@@ -4,17 +4,19 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-15 17:19:56
+ * @LastEditTime: 2023-08-17 11:05:14
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_manager.hpp"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
-routing_manager::routing_manager() : routing_manager_thread_m(std::bind(&routing_manager::routing_manager_thread,this)),
+routing_manager::routing_manager() : routing_tables_m(std::make_shared<routing_tables>()),
+                                     message_handler_m(std::make_shared<message_handler>(routing_tables_m)),
                                      position_(data_raw_in.begin()),
                                      remaining_(0),
                                      send_len_m(8096),
-                                     data_raw_in_max(50*1024u)
+                                     data_raw_in_max(50*1024u),
+                                     routing_manager_thread_m(std::bind(&routing_manager::routing_manager_thread,this))
 {
     uint32 it_max = 5;
     for(int i = 0;i < it_max;++i)
@@ -24,7 +26,6 @@ routing_manager::routing_manager() : routing_manager_thread_m(std::bind(&routing
     }
     send_buff_m = std::make_unique<uint8[]>(send_len_m);
     // send_buff_m = new uint8[send_len_m];
-    
 }
 
 routing_manager::~routing_manager()
@@ -150,7 +151,7 @@ boolean routing_manager::push_data(sint32 clientfd,const uint8 *data, const uint
             if(message_.message_header_m.get_cmd_id() == _COM_CMD_TYPES_::COM_CMD_LOGIN)
             {
                 if(message_.message_header_m.get_topic_id() == (uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ))
-                    this->routing_tables_m.Register(clientfd,message_.message_header_m.get_src_id());
+                    this->routing_tables_m->Register(clientfd,message_.message_header_m.get_src_id());
             }
             //此处进行匹配
         }else
@@ -171,7 +172,7 @@ boolean routing_manager::push_data(sint32 clientfd,const uint8 *data, const uint
 boolean routing_manager::pop_send_data(sint32& clientfd,uint8** data,uint32& len)
 {
     std::lock_guard<std::mutex> it_lock(send_buff_mutex_);  
-    if(message_handler_m.pop_message(message_m))
+    if(message_handler_m->pop_message(message_m))
     {
         auto serializer = this->get_serializer();
         //序列化头部和payload
@@ -186,7 +187,7 @@ boolean routing_manager::pop_send_data(sint32& clientfd,uint8** data,uint32& len
         }
         
         //根据dst id去routing_tables匹配对于的客户端的client id，并赋值给入参clientfd
-        if(!routing_tables_m.routing_map(message_m.message_header_m.get_dst_id(),clientfd))
+        if(!routing_tables_m->routing_map(message_m.message_header_m.get_dst_id(),clientfd))
         {
             spdlog::warn("send fail:dst_id[0x{:02x}] not login",message_m.message_header_m.get_dst_id());
             serializer->reset();
@@ -223,17 +224,17 @@ boolean routing_manager::pop_send_data(sint32& clientfd,uint8** data,uint32& len
 
 void routing_manager::push_message_out(message_impl& mesg)
 {
-    message_handler_m.put_message_out(mesg);
+    message_handler_m->put_message_out(mesg);
 }
 
 void routing_manager::remove_routing(sint32 clientfd)
 {
-    routing_tables_m.Unregister(clientfd);
+    routing_tables_m->Unregister(clientfd);
 }
 
 void routing_manager::remove_routing(uint32 src_id)
 {
-    routing_tables_m.Unregister(src_id);
+    routing_tables_m->Unregister(src_id);
 }
 
 void routing_manager::set_data(const uint8 *_data,  uint32 _length) 
@@ -288,7 +289,7 @@ void routing_manager::ParseProtocal(void)
             message_.show_message();
             spdlog::info("message cnt:[{:d}]",mesg_cnt); 
             if(message_.message_header_m.get_header() == MESSAGE_HEADER)
-                message_handler_m.put_message(message_);
+                message_handler_m->put_message(message_);
             else
                 spdlog::error("header mismatch func[{}] line[{d}]",__FUNCTION__,__LINE__);
             distance = std::distance(deserializer_->data_.begin(),deserializer_->position_);

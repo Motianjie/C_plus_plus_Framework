@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-15 15:14:21
+ * @LastEditTime: 2023-08-17 11:10:11
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
@@ -189,11 +189,11 @@ int main(int argc, char **argv)
     // test_findprotocolheader();
     // test_serializer();
     // test_serializer_queue();
-    // test_praseprotocol();
+     test_praseprotocol();
     // test_exception();
     // test_();
 
-    EpollTcp_Test();
+    // EpollTcp_Test();
 
     // json_test();
     // spdlog_test();

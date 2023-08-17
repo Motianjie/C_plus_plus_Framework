@@ -225,29 +225,29 @@ void test_praseprotocol()
     routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
 
     //send data 测试
-    // uint8* data = nullptr;
-    // uint32 len;
-    // sint32 clientfd =-1;
-    // // routing_manager_instance.push_message_out(test_message);
-    // while(1)
-    // {
-    //     if(routing_manager_instance.pop_send_data(clientfd,&data,len))
-    //     {
-    //         std::vector<uint8> tmpvec;
-    //         tmpvec.insert(tmpvec.end(),data,data+len);
-    //         spdlog::info("show_message payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
-    //         tmpvec.clear();
-    //     }
-    //     sleep(1);
-    // }
+    uint8* data = nullptr;
+    uint32 len;
+    sint32 clientfd =-1;
+    // routing_manager_instance.push_message_out(test_message);
+    while(1)
+    {
+        if(routing_manager_instance.pop_send_data(clientfd,&data,len))
+        {
+            std::vector<uint8> tmpvec;
+            tmpvec.insert(tmpvec.end(),data,data+len);
+            spdlog::info("show_message payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
+            tmpvec.clear();
+        }
+        sleep(1);
+    }
     
     
     // while(1)
     // {
     //     // routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
-    //     routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+    //      routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
     //     // routing_manager_instance.push_data((uint8*)&tmp,4);
-    //     usleep(100u);
+    //     sleep(1);
     // }
 
 }
