@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing_tables.hpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing/routing_tables.hpp
  * @Description:  
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 14:17:27
+ * @LastEditTime: 2023-08-17 17:22:33
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_TABLES__
@@ -22,6 +22,9 @@ public:
     void Unregister(sint32 clientfd);
     void Unregister(uint32 src_id);
 
+    boolean Check(uint32 src_id);
+
+    const std::unordered_map<sint32,uint32> get_map() const;
     
     boolean routing_map(sint32 dst_id,sint32& clientfd);
 private:

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 15:03:31
+ * @LastEditTime: 2023-08-17 17:17:32
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef _MESSAGE_CFG_HPP_
@@ -46,6 +46,13 @@ enum class _LOGIN_TOPIC_TYPE_
 {
     _COM_CMD_LOGIN_TOPIC_REQ = 0,
     _COM_CMD_LOGIN_TOPIC_ACK,
+};
+
+enum class _CHECK_TOPIC_TYPE_ 
+{
+    _COM_CMD_CHECK_TOPIC_REQ = 0,
+    _COM_CMD_CHECK_TOPIC_ACK,
+    _COM_CMD_CHECK_TOPIC_NACK,
 };
 
 enum class _IPC_ID_

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-17 16:26:09
+ * @LastEditTime: 2023-08-17 18:31:24
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_tables.hpp"
@@ -58,6 +58,24 @@ void routing_tables::Unregister(uint32 src_id)
     }
     spdlog::error("!!!!!!!!!!!!!!!!!!!!src_id[0x{:02x}] is already logout, logout fail!!!!!!!!!!!!!!!!!!!!",src_id);
 }
+
+boolean routing_tables::Check(uint32 src_id)
+{
+    for(const auto& pair : routing_tables_m)
+    {
+        if(pair.second == src_id)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+const std::unordered_map<sint32,uint32> routing_tables::get_map() const
+{
+    return routing_tables_m;
+}
+
 
 boolean routing_tables::routing_map(sint32 dst_id,sint32& clientfd)
 {
