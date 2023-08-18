@@ -6,7 +6,7 @@
 #include <cstring>
 #include "deserializer.hpp"
 #include "byte_order.hpp"
-
+#include "spdlog/spdlog.h"
 deserializer::deserializer()
     : position_(data_.begin()),
       remaining_(0)
@@ -45,7 +45,11 @@ void deserializer::set_remaining(uint32 _remaining) {
 
 bool deserializer::deserialize(uint8& _value) {
     if (0 == remaining_)
+    {
+        spdlog::error("deserialize fail because of _length[{:d}] == remaining_[{:d}] [{}] line[{}]",0,remaining_,__FUNCTION__,__LINE__);
         return false;
+    }
+        
 
     _value = *position_++;
 
@@ -55,7 +59,11 @@ bool deserializer::deserialize(uint8& _value) {
 
 bool deserializer::deserialize(uint16& _value) {
     if (2 > remaining_)
+    {
+        spdlog::error("deserialize fail because of _length[{:d}] > remaining_[{:d}] [{}] line[{}]",2,remaining_,__FUNCTION__,__LINE__);
         return false;
+    }
+        
 
     uint8 byte0, byte1;
     byte0 = *position_++;
@@ -69,7 +77,11 @@ bool deserializer::deserialize(uint16& _value) {
 
 bool deserializer::deserialize(uint32 &_value) {
     if (4 > remaining_)
+    {
+        spdlog::error("deserialize fail because of _length[{:d}] > remaining_[{:d}] [{}] line[{}]",4,remaining_,__FUNCTION__,__LINE__);
         return false;
+    }
+        
 
     uint8 byte0 = 0, byte1, byte2, byte3;
     byte0 = *position_++;
@@ -86,10 +98,14 @@ bool deserializer::deserialize(uint32 &_value) {
 
 bool deserializer::deserialize(uint8 *_data, uint32 _length) {
     if (_length > remaining_)
+    {
+        spdlog::error("deserialize fail because of _length[{:d}] > remaining_[{:d}] [{}] line[{}]",_length,remaining_,__FUNCTION__,__LINE__);
         return false;
+    }
+        
     if (_data == nullptr)
     {
-        std::cout << "deserialize fail because of nullptr" << std::endl;
+        spdlog::error("deserialize fail because of nullptr [{}] line[{}]",__FUNCTION__,__LINE__);
         return false;
     }
     

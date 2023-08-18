@@ -9,6 +9,8 @@
 #include "nlohmann/json.hpp"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/bin_to_hex.h"
 #include "EpollServer.hpp"
 #include "Platform_Types.hpp"
 #include "testcase.hpp"
@@ -61,7 +63,7 @@ void test_()//测试std::map的键可以是自定义的结构体，但是要重�
 void test_serializer()
 {
     routing_manager routing_manager_instance;
-    message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
+    message_header test_header(0x23242526,0,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
     uint8 payload[3] = {0xaa,0xbb,0xcc};//测试消息体payload
     //构造消息体
     message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
@@ -133,35 +135,34 @@ void test_serializer_queue()
     }
 }
 
-    std::vector<uint8_t>::iterator test_findProtocolHeader(std::vector<uint8_t>& data, std::vector<uint8_t>& header)
-    {
-        auto headerPos = std::search(data.begin(), data.end(), header.begin(), header.end());
-        return headerPos;
-    }
+std::vector<uint8_t>::iterator test_findProtocolHeader(std::vector<uint8_t>& data, std::vector<uint8_t>& header)
+{
+    auto headerPos = std::search(data.begin(), data.end(), header.begin(), header.end());
+    return headerPos;
+}
 
-    void test_findprotocolheader()
-    {
-    // 示例函数：在二进制数据流中查找协议头
-        std::vector<uint8_t> data = { 0x01,0x23, 0x24, 0x25, 0x26, 0x02, 0x03 };
-        std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
-        auto headerPos = test_findProtocolHeader(data, header);
-        if (headerPos != data.end()) {
-            // uint32 distance = std::distance(data.begin(), headerPos);
-            // std::cout << "Protocol header found at position: " << distance << std::endl;
-            std::cout << "Protocol header found at position: " << std::distance(data.begin(), headerPos) << std::endl;
-        } else {
-            std::cout << "Protocol header not found!" << std::endl;
-        }
+void test_findprotocolheader()
+{
+// 示例函数：在二进制数据流中查找协议头
+    std::vector<uint8_t> data = { 0x01,0x23, 0x24, 0x25, 0x26, 0x02, 0x03 };
+    std::vector<uint8_t> header = { 0x23, 0x24, 0x25, 0x26};
+    auto headerPos = test_findProtocolHeader(data, header);
+    if (headerPos != data.end()) {
+        // uint32 distance = std::distance(data.begin(), headerPos);
+        // std::cout << "Protocol header found at position: " << distance << std::endl;
+        std::cout << "Protocol header found at position: " << std::distance(data.begin(), headerPos) << std::endl;
+    } else {
+        std::cout << "Protocol header not found!" << std::endl;
     }
+}
 
-void test_praseprotocol()
+void test_exception()
 {
     routing_manager routing_manager_instance;
-    message_header test_header(0x23242526,0x0203,0x0405,0x0607,_COM_CMD_TYPES_::COM_CMD_FORWARD,0x0809);//测试消息体头部
-    uint8 payload[] = {0xaa,0xbb,0xcc,0xdd,0xee,0xff,0x00,0x11,0x12,0x13,0x14,0x15};//测试消息体payload
+    message_header test_header(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
+    uint8 payload[] = {0x11,0x12,0x13,0x14,0x15};//测试消息体payload
     //构造消息体
     message_impl test_message((const message_header&)test_header,(const uint32)sizeof(payload),(const uint8*)&payload);
-    //从序列化器队列中获取一个序列化器
     auto header_serializer = routing_manager_instance.get_serializer();
     //序列化头部和payload
     if(test_message.message_header_m.serialize(header_serializer) && test_message.serialize(header_serializer))
@@ -173,23 +174,169 @@ void test_praseprotocol()
         routing_manager_instance.put_serializer(header_serializer);
         return;
     }
-    uint32 tmp = 0x12345678u;
-    //压力测试，当没有usleep情况，一直运行测试不通过，待优化。有usleep的情况下，1微秒也可以处理过来
-    // for(uint8 i = 0;i< 255;i++)
-    // {
-    //     routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
-    //     routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
-    //     routing_manager_instance.push_data((uint8*)&tmp,4);
-    //     usleep(10u);
-    // }
-
+    uint8 tmp[] = {0x23,0x24,0x25,0x26,0x00,0x01,0x02};
+    header_serializer->set_data(tmp,sizeof(tmp));
+    routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+    sleep(1);
     while(1)
     {
-        // routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
+        sleep(1);
         routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
-        // routing_manager_instance.push_data((uint8*)&tmp,4);
-        usleep(100u);
     }
+}
+
+
+void test_praseprotocol()
+{
+    routing_manager routing_manager_instance;
+
+    /*client 1 login*/
+    message_header test_header_login_client1(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
+    uint8 payload[] = {0xaa,0xbb,0xcc,0xdd,0xee,0xff,0x00,0x11,0x12,0x13,0x14,0x15};//测试消息体payload
+    //构造消息体
+    message_impl test_message_login_client1((const message_header&)test_header_login_client1,(const uint32)sizeof(payload),(const uint8*)&payload);
+
+    std::cout << "send test" << std::endl;
+    //从序列化器队列中获取一个序列化器
+    auto serializer_login_client1 = routing_manager_instance.get_serializer();
+    //序列化头部和payload
+    if(test_message_login_client1.message_header_m.serialize(serializer_login_client1) && test_message_login_client1.serialize(serializer_login_client1))
+    {
+        std::cout << "序列化成功" << std::endl;
+    }else
+    {
+        serializer_login_client1->reset();
+        routing_manager_instance.put_serializer(serializer_login_client1);
+        return;
+    }
+    sint32 client_id_client1 = 0x05;
+    routing_manager_instance.push_data(client_id_client1,(uint8*)serializer_login_client1->get_data(), serializer_login_client1->get_size());
+    routing_manager_instance.push_data((uint8*)serializer_login_client1->get_data(), serializer_login_client1->get_size());
+
+    serializer_login_client1->reset();
+    routing_manager_instance.put_serializer(serializer_login_client1);
+
+    /*client 2 login*/
+    message_header test_header_login_client2(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_2_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
+    //构造消息体
+    message_impl test_message_login_client2((const message_header&)test_header_login_client2,(const uint32)sizeof(payload),(const uint8*)&payload);
+
+    std::cout << "send test" << std::endl;
+    //从序列化器队列中获取一个序列化器
+    auto serializer_login_client2 = routing_manager_instance.get_serializer();
+    //序列化头部和payload
+    if(test_message_login_client2.message_header_m.serialize(serializer_login_client2) && test_message_login_client2.serialize(serializer_login_client2))
+    {
+        std::cout << "序列化成功" << std::endl;
+    }else
+    {
+        serializer_login_client2->reset();
+        routing_manager_instance.put_serializer(serializer_login_client2);
+        return;
+    }
+    sint32 client_id_client2 = 0x06;
+    routing_manager_instance.push_data(client_id_client2,(uint8*)serializer_login_client2->get_data(), serializer_login_client2->get_size());
+    routing_manager_instance.push_data((uint8*)serializer_login_client2->get_data(), serializer_login_client2->get_size());
+
+    serializer_login_client2->reset();
+    routing_manager_instance.put_serializer(serializer_login_client2);
+
+    /*client 3 login*/
+    message_header test_header_login_client3(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_3_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_LOGIN,0x0809);//测试LOGIN消息体头部
+    //构造消息体
+    message_impl test_message_login_client3((const message_header&)test_header_login_client3,(const uint32)sizeof(payload),(const uint8*)&payload);
+
+    std::cout << "send test" << std::endl;
+    //从序列化器队列中获取一个序列化器
+    auto serializer_login_client3 = routing_manager_instance.get_serializer();
+    //序列化头部和payload
+    if(test_message_login_client3.message_header_m.serialize(serializer_login_client3) && test_message_login_client3.serialize(serializer_login_client3))
+    {
+        std::cout << "序列化成功" << std::endl;
+    }else
+    {
+        serializer_login_client3->reset();
+        routing_manager_instance.put_serializer(serializer_login_client3);
+        return;
+    }
+    sint32 client_id_client3 = 0x07;
+    routing_manager_instance.push_data(client_id_client3,(uint8*)serializer_login_client3->get_data(), serializer_login_client3->get_size());
+    routing_manager_instance.push_data((uint8*)serializer_login_client3->get_data(), serializer_login_client3->get_size());
+    
+    serializer_login_client2->reset();
+    routing_manager_instance.put_serializer(serializer_login_client2);
+
+    /*check*/
+    message_header test_header_check(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_CHECK_TOPIC_TYPE_::_COM_CMD_CHECK_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_CHECK,0x0809);//测试LOGIN消息体头部
+    //构造消息体
+    message_impl test_message_check((const message_header&)test_header_check,(const uint32)sizeof(payload),(const uint8*)&payload);
+
+    std::cout << "send test" << std::endl;
+    //从序列化器队列中获取一个序列化器
+    auto header_serializer_ = routing_manager_instance.get_serializer();
+    //序列化头部和payload
+    if(test_message_check.message_header_m.serialize(header_serializer_) && test_message_check.serialize(header_serializer_))
+    {
+        std::cout << "序列化成功" << std::endl;
+    }else
+    {
+        header_serializer_->reset();
+        routing_manager_instance.put_serializer(header_serializer_);
+        return;
+    }
+
+    header_serializer_->reset();
+    routing_manager_instance.put_serializer(header_serializer_);
+
+    /*broadcast*/
+    message_header test_header_broadcast(0x23242526,0,(uint32)_IPC_ID_::_COM_CLIENT_1_,(uint32)_IPC_ID_::_COM_SERVER_,(uint32)(_LOGIN_TOPIC_TYPE_::_COM_CMD_LOGIN_TOPIC_REQ),_COM_CMD_TYPES_::COM_CMD_BROADCAST,0x0809);//测试LOGIN消息体头部
+    //构造消息体
+    message_impl test_message_broadcast((const message_header&)test_header_broadcast,(const uint32)sizeof(payload),(const uint8*)&payload);
+
+    std::cout << "send test" << std::endl;
+    //从序列化器队列中获取一个序列化器
+    auto serializer_broadcast = routing_manager_instance.get_serializer();
+    //序列化头部和payload
+    if(test_message_broadcast.message_header_m.serialize(serializer_broadcast) && test_message_broadcast.serialize(serializer_broadcast))
+    {
+        std::cout << "序列化成功" << std::endl;
+    }else
+    {
+        serializer_broadcast->reset();
+        routing_manager_instance.put_serializer(serializer_broadcast);
+        return;
+    }
+    routing_manager_instance.push_data((uint8*)serializer_broadcast->get_data(), serializer_broadcast->get_size());
+    
+    // serializer_broadcast->reset();
+    // serializer_broadcast.put_serializer(serializer_broadcast);
+    
+    //send data 测试
+    uint8* data = nullptr;
+    uint32 len;
+    sint32 clientfd =-1;
+    // routing_manager_instance.push_message_out(test_message);
+    while(1)
+    {
+        if(routing_manager_instance.pop_send_data(clientfd,&data,len))
+        {
+            std::vector<uint8> tmpvec;
+            tmpvec.insert(tmpvec.end(),data,data+len);
+            spdlog::info("show_message payload_len[{}] payload elements:{}",len,spdlog::to_hex(tmpvec));
+            tmpvec.clear();
+        }
+        sleep(1);
+        routing_manager_instance.push_data((uint8*)serializer_broadcast->get_data(), serializer_broadcast->get_size());
+    }
+    
+    
+    // while(1)
+    // {
+    //     // routing_manager_instance.push_data((uint8*)&tmp,4);//插入异常字段干扰
+    //      routing_manager_instance.push_data((uint8*)header_serializer->get_data(), header_serializer->get_size());
+    //     // routing_manager_instance.push_data((uint8*)&tmp,4);
+    //     sleep(1);
+    // }
 
 }
 

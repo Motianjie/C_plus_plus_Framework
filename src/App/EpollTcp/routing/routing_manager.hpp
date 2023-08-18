@@ -1,10 +1,10 @@
 /*
- * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing_manager.hpp
+ * @FilePath: /C_plus_plus_Framework/src/App/EpollTcp/routing/routing_manager.hpp
  * @Description:  
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-04 17:34:12
+ * @LastEditTime: 2023-08-16 15:11:27
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
@@ -12,6 +12,9 @@
 #include "Platform_Types.hpp"
 #include "utility.hpp"
 #include "message_handler.hpp"
+#include "routing_tables.hpp"
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/bin_to_hex.h"
 #include <memory>
 #include <queue>
 #include <condition_variable>
@@ -21,6 +24,7 @@
 class message_handler;
 class serializer;
 class deserializer;
+class routing_tables;
 /**
  * @brief: 该类用以连接messagehandler类和EpollServer类
  * 接收来自EpollServer的序列化二进制数据流并在主线程中读取和处理
@@ -42,12 +46,20 @@ public:
     void routing_manager_thread(void);//routing主线程
 
 public:
+    boolean push_data(sint32 clientfd,const uint8 *data, const uint32 len);
     boolean push_data(const uint8 *data, const uint32 len);
     void ParseProtocal();
+    boolean pop_send_data(sint32& clientfd,uint8** data,uint32& len);
 
+    void push_message_out(message_impl& mesg);
 
+    void remove_routing(sint32 clientfd);
+    void remove_routing(uint32 src_id);
+
+    void set_data(const uint8 *_data,  uint32 _length);
     private:
-    message_handler message_handler_m;
+    std::shared_ptr<routing_tables> routing_tables_m;
+    std::shared_ptr<message_handler> message_handler_m;
 
     private:
     std::queue<std::shared_ptr<serializer>> serializers_;
@@ -67,6 +79,14 @@ public:
     std::vector<uint8> data_raw_in; //存储client发送的二进制数据流
     std::vector<uint8>::iterator position_;
     uint32 remaining_;
+    uint32 data_raw_in_max;
+
+    private:
+    message_impl message_m;
+    // uint8* send_buff_m;
+    std::unique_ptr<uint8[]> send_buff_m;
+    uint32 send_len_m;
+    std::mutex send_buff_mutex_;
 
 };
 

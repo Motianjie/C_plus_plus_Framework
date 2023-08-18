@@ -60,7 +60,8 @@
         "any": "cpp",
         "filesystem": "cpp",
         "valarray": "cpp",
-        "csignal": "cpp"
+        "csignal": "cpp",
+        "*.ipp": "cpp"
     }
 }
 

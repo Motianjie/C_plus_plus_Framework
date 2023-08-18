@@ -4,10 +4,10 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-09 16:28:40
+ * @LastEditTime: 2023-08-17 11:10:11
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #include <iostream>
 #include <sys/prctl.h>
 #include <memory>
@@ -30,7 +30,7 @@
 
 void spdlog_test()
 {
-    spdlog::set_level(spdlog::level::info); // Set global log level to debug
+
     spdlog::info("Welcome to spdlog!");
     spdlog::error("Some error message with arg: {}", 1);
     spdlog::warn("Easy padding in numbers like {:08d}", 12);
@@ -78,7 +78,7 @@ void log_test()
      *write async log file
      */
     auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "/home/thor/Desktop/Reconsitution_C++/log/async_log.txt");  
-    SPDLOG_LOGGER_INFO(async_file,"test");
+    SPDLOG_LOGGER_INFO(async_file,"test{1}",1);
 
     /*
      *write bin file
@@ -93,23 +93,23 @@ void log_test()
 
 static void callback(sint32 clientfd,void* data,uint32 len)
 {
-  struct Message {
-    int number;
-    uint32_t len;
-    void* text;
-};
+//   struct Message {
+//     int number;
+//     uint32_t len;
+//     void* text;
+// };
 
-    Message message;
-    memcpy(&message.number,data,4);
-    memcpy(&message.len,data+4,4);
-    message.text = new uint8[message.len];
-    memcpy(message.text,data+8,message.len);
-    char tmpstr[message.len] = {0};
-    strncpy(tmpstr,(const char*)message.text,message.len);
+    // Message message;
+    // memcpy(&message.number,data,4);
+    // memcpy(&message.len,data+4,4);
+    // message.text = new uint8[message.len];
+    // memcpy(message.text,data+8,message.len);
+    // char tmpstr[message.len] = {0};
+    // strncpy(tmpstr,(const char*)message.text,message.len);
     // spdlog::info("recv message number [{:d}] text [{}]", message.number,message.text);
-    std::cout << "recv message number " << message.number << "message text " << tmpstr << std::endl;
-    std::cout << "epoll callback clientfd " << clientfd << " len " << len << std::endl;
-    delete[] message.text;
+    // std::cout << "recv message number " << message.number << "message text " << tmpstr << std::endl;
+    // std::cout << "epoll callback clientfd " << clientfd << " len " << len << std::endl;
+    // delete[] message.text;
 }
 
 static void callback2(sint32 clientfd,void* data,uint32 len)
@@ -120,9 +120,11 @@ void EpollTcp_Test()
 {
     std::string path("/tmp/localsocket");
     std::string path1("/tmp/localsocket1");
-    EpollServer *server = new EpollServer();
+    // EpollServer *server = new EpollServer();
+    static std::shared_ptr<EpollServer> server = std::make_shared<EpollServer>();
     static IPCServer ipc1(callback,path);
     static IPCServer ipc2(callback2,path1);
+
 
     // server->Epoll_AddEvent(ipc1);
     // server->Epoll_AddEvent(ipc2);
@@ -183,12 +185,12 @@ int main(int argc, char **argv)
     // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_BROADCAST);
     // mesghandler.action((_COM_CMD_TYPES_)6);
 
-    Observer_test();
+    // Observer_test();
     // test_findprotocolheader();
     // test_serializer();
     // test_serializer_queue();
-    // test_praseprotocol();
-
+     test_praseprotocol();
+    // test_exception();
     // test_();
 
     // EpollTcp_Test();
@@ -197,11 +199,11 @@ int main(int argc, char **argv)
     // spdlog_test();
     // log_test();
     // EpollTcp_Test();
-    // while(1)
-    // {
-    //     std::cout << "main thread" << std::endl;
-    //     sleep(1);
-    // }
+    while(1)
+    {
+        // std::cout << "main thread" << std::endl;
+        sleep(1);
+    }
 
     return 0;
 }

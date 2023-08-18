@@ -11,4 +11,5 @@ extern void test_serializer();
 extern void test_serializer_queue();
 extern void test_findprotocolheader();
 extern void test_praseprotocol();
+extern void test_exception();
 #endif 

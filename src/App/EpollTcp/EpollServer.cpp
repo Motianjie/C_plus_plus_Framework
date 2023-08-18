@@ -2,7 +2,8 @@
 
 EpollServer::~EpollServer()
 {
-    EpollServer_thread_m.join();
+    // EpollServer_thread_m.join();
+    // EpollServer_thread_send_m.join();
     close(epfd_m);
     std::cout << "EpollServer destructor" << std::endl;
 }
@@ -186,6 +187,65 @@ sint32 EpollServer::Epoll_Wait(void)
     return epoll_wait(epfd_m,evt_m, MAX_EVENTS_M, -1);
 }
 
+
+void EpollServer::Epoll_Thread_Send(void)
+{
+    while(1)
+    {
+        static auto startTime = std::chrono::high_resolution_clock::now();
+        static uint16 send_frame_cnt = 0;
+        uint8* data = nullptr;
+        uint32 len = 0;
+        sint32 clientfd = -1;
+        //将队列中待发送的message序列化成二进制数据流发送，直到队列为空
+        while(routing_manager_m.pop_send_data(clientfd,&data,len))
+        {
+            if(clientfd != -1 && data!= nullptr && len > 0)
+            {
+                ssize_t bytesSent = send(clientfd, data, len, 0);
+                if(bytesSent == -1)
+                {
+                    if(errno == EAGAIN || errno == EWOULDBLOCK)
+                    {
+                        spdlog::warn("The send buffer is full,try again later.");
+                        //发送缓冲区已满，稍后再尝试发送
+                    }else if(errno == EINTR)
+                    {
+                        spdlog::warn("send process interrupted and try resend");
+                        bytesSent = send(clientfd, data, len, 0);
+                    }else
+                    {
+                        spdlog::error("send failed {}",std::strerror(errno));
+                        routing_manager_m.remove_routing(clientfd);
+                        //Del ipc server client vector
+                        for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) 
+                        {
+                            for(auto ipc_client :(*it)->ipc_clients_m)
+                            {
+                                if(ipc_client.src_local_sockfd == clientfd)
+                                {
+                                    (*it)->DelIpcClient(ipc_client.src_local_sockfd);
+                                }
+                            }
+                        }   
+                    }
+                }else
+                {
+                    send_frame_cnt++;
+                }
+                auto currentTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
+                if(duration >= 1000)
+                {
+                    spdlog::info("frame_cnt_send[{:d}]",send_frame_cnt);
+                    send_frame_cnt=0u;
+                    startTime = currentTime;
+                }
+            }  
+        }
+    }
+}
+
 /*============================================================================*/
 /*  @brief      Main thread to handle epoll events
  *              Asynchronous and Non Reentrant
@@ -197,7 +257,7 @@ sint32 EpollServer::Epoll_Wait(void)
  {
     std::cout << "Epoll thread created" << std::endl;
     std::string threadName = "Epoll_Thread";
-    // EpollServer_thread_m.detach();//
+    EpollServer_thread_m.detach();//
     pthread_setname_np(pthread_self(), threadName.c_str());
     
     sint32 clt_sock;
@@ -209,7 +269,7 @@ sint32 EpollServer::Epoll_Wait(void)
         sint32 act_epoll_fds = Epoll_Wait();
         for(sint32 i = 0; i < act_epoll_fds; ++i)
         {
-            int32_t fd_idx = evt_m[i].data.fd;
+            sint32 fd_idx = evt_m[i].data.fd;
             boolean isaccept = false;
             for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it)  //根据events事件的fd匹配对应的ipcserver instance
             {
@@ -253,6 +313,7 @@ sint32 EpollServer::Epoll_Wait(void)
                     }else
                     {//socket出现错误，回收对应资源
                         std::cout << "fail to read socket " << strerror(errno) <<std::endl;
+                        routing_manager_m.remove_routing(fd_idx);
                         //Del ipc server client vector
                         for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) 
                         {
@@ -270,6 +331,7 @@ sint32 EpollServer::Epoll_Wait(void)
                 if(tmprecvlen == 0u)//客户端关闭连接
                 {
                     std::cout<< "client disconnected " << strerror(errno) << std::endl;
+                    routing_manager_m.remove_routing(fd_idx);
                     //Del ipc server client vector
                     for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) 
                     {
@@ -284,13 +346,8 @@ sint32 EpollServer::Epoll_Wait(void)
                     close(fd_idx);//服务端回收对应socket资源
                 }
 
-                //testcase:send to server 
-                #if 1
-                const char* message = "Hello, Server!";
-                ssize_t bytesSent = send(fd_idx, message, strlen(message), 0);
-                #endif
-
                 //传递给routing_manager
+                routing_manager_m.push_data(fd_idx,buff,(uint32)recvlen);
                 routing_manager_m.push_data(buff,(uint32)recvlen);
                 //由于接收到客户端的消息，根据客户端的fd，找到对应的ipc server,并调用回调函数通知
                 for (auto it = ipc_ptr_m.begin(); it != ipc_ptr_m.end(); ++it) //遍历ipcserver
@@ -307,9 +364,15 @@ sint32 EpollServer::Epoll_Wait(void)
                         }
                     }
                 }  
+
+                //testcase:send to client 
+                #if 0
+                const char* message = "Hello, client!";
+                ssize_t bytesSent1 = send(fd_idx, message, strlen(message), 0);
+                #endif
+                
             }
         }
     }
     close(epfd_m);//如果突发情况，回收epoll master资源
- 
  }
