@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-17 18:35:29
+ * @LastEditTime: 2023-08-18 10:28:34
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_action_base.hpp"
@@ -93,7 +93,7 @@ void BROADCAST::Do_Action(const message_impl& msg)
     {
         broadcast_message.message_header_m.set_dst_id(pairs.second);
         if(message_handler_m.get())
-            message_handler_m->put_message_out(msg);
+            message_handler_m->put_message_out(broadcast_message);
         else
             spdlog::error("login message handler null put message out failed");
     }
