@@ -106,16 +106,16 @@ void test_serializer()
 }
 
 
-static routing_manager routing_manager_instance;
+// static routing_manager routing_manager_instance;
 void worker()
 {
     while(1)
     {
-        routing_manager_instance.get_serializer();
-        std::cout << "get serializer " << std::endl;
-        routing_manager_instance.get_deserializer();
-        std::cout << "get deserializer " << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        // routing_manager_instance.get_serializer();
+        // std::cout << "get serializer " << std::endl;
+        // routing_manager_instance.get_deserializer();
+        // std::cout << "get deserializer " << std::endl;
+        // std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
@@ -124,14 +124,14 @@ void test_serializer_queue()
     std::thread t(worker);
     while(1)
     {
-        std::shared_ptr<serializer> serialinstance;
-        std::shared_ptr<deserializer> deserialinstance;
+        // std::shared_ptr<serializer> serialinstance;
+        // std::shared_ptr<deserializer> deserialinstance;
  
-        routing_manager_instance.put_serializer(serialinstance);
-        std::cout << "put serializer " << std::endl;
-        routing_manager_instance.put_deserializer(deserialinstance);
-        std::cout << "put deserializer " << std::endl;
-        sleep(10);
+        // routing_manager_instance.put_serializer(serialinstance);
+        // std::cout << "put serializer " << std::endl;
+        // routing_manager_instance.put_deserializer(deserialinstance);
+        // std::cout << "put deserializer " << std::endl;
+        // sleep(10);
     }
 }
 

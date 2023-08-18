@@ -33,8 +33,10 @@ include_directories(${APP_DIR}utility)
 include_directories(${APP_DIR})
 include_directories(${MIDDLEWARE_DIR}spdlog)
 include_directories(${MIDDLEWARE_DIR}nlohmann)
+include_directories(${MIDDLEWARE_DIR}os)
 include_directories(${MIDDLEWARE_DIR})
 include_directories(${TEST_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/src/)
 
 
 #static library

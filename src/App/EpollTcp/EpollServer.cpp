@@ -255,10 +255,9 @@ void EpollServer::Epoll_Thread_Send(void)
 /*============================================================================*/ 
  void EpollServer::Epoll_Thread(void)
  {
+    thread_set thread_set_("Epoll_Thread",EpollServer_thread_m,0);
     std::cout << "Epoll thread created" << std::endl;
-    std::string threadName = "Epoll_Thread";
     EpollServer_thread_m.detach();//
-    pthread_setname_np(pthread_self(), threadName.c_str());
     
     sint32 clt_sock;
     uint8 buff[RecvBufferSize];

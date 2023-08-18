@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-17 15:15:44
+ * @LastEditTime: 2023-08-18 18:20:06
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "message_handler.hpp"
@@ -95,9 +95,8 @@ void message_handler::message_handle()
 
 void message_handler::message_handler_thread()
 {
+    thread_set thread_set_("message_handler_thread",message_handler_thread_m,1);
     std::cout << "message_handler_thread created" << std::endl;
-    std::string threadName = "message_handler_thread";
-    pthread_setname_np(pthread_self(), threadName.c_str());
     message_handler_thread_m.detach();
     while(1)
     {

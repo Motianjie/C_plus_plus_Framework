@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-17 11:05:14
+ * @LastEditTime: 2023-08-18 18:32:00
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #include "routing_manager.hpp"
@@ -325,9 +325,8 @@ void routing_manager::ParseProtocal(void)
 
 void routing_manager::routing_manager_thread()
 {
+    thread_set thread_set_("routing_manager_thread",routing_manager_thread_m,1);
     std::cout << "routing_manager_thread created" << std::endl;
-    std::string threadName = "routing_manager_thread";
-    pthread_setname_np(pthread_self(), threadName.c_str());
     routing_manager_thread_m.detach();
     while(1)
     {

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-16 15:11:27
+ * @LastEditTime: 2023-08-18 16:01:21
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef __ROUTING_MANAGER__
@@ -20,7 +20,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
-
+#include "thread_set.hpp"
 class message_handler;
 class serializer;
 class deserializer;

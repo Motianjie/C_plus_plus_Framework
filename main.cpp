@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-17 11:10:11
+ * @LastEditTime: 2023-08-18 18:28:31
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
@@ -13,6 +13,7 @@
 #include <memory>
 #include <fstream>
 #include <map>
+#include <sys/sysinfo.h>
 #include "Concrete_subject.hpp"
 #include "Concreteobserverd_sample_0.hpp"
 #include "Concreteobserverd_sample_1.hpp"
@@ -174,9 +175,11 @@ void Observer_test()
 
 int main(int argc, char **argv)
 {
+    // printf("cpu core cnt:%d\n",sysconf(_SC_NPROCESSORS_ONLN));
+    // printf("cpu core cnt:%d\n",get_nprocs());
     pid_t pid = getpid();
     std::cout << "当前进程的PID: " << pid << std::endl;
-    pthread_setname_np(pthread_self(), "Main Thread");
+    // pthread_setname_np(pthread_self(), "Main Thread");
     // message_handler mesghandler;
     // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGIN);
     // mesghandler.action(_COM_CMD_TYPES_::COM_CMD_LOGOUT);

@@ -4,7 +4,7 @@
  * @Author: Motianjie 13571951237@163.com
  * @Version: 0.0.1
  * @LastEditors: Motianjie 13571951237@163.com
- * @LastEditTime: 2023-08-10 19:47:51
+ * @LastEditTime: 2023-08-18 17:20:23
  * Copyright    : ASENSING CO.,LTD Copyright (c) 2023.
  */
 #ifndef _EPOLLSERVER_HPP_
@@ -17,6 +17,8 @@
 #include <map>
 #include <vector>
 #include <list>
+
+#include "thread_set.hpp"
 #define MAX_EVENTS_M 255
 
 /**
@@ -32,8 +34,10 @@ public:
     EpollServer() : EpollServer_thread_m(std::bind(&EpollServer::Epoll_Thread,this)),
                     EpollServer_thread_send_m(std::bind(&EpollServer::Epoll_Thread_Send,this))
     {   
+
     };
     ~EpollServer();
+    
     boolean Epoll_AddEvent(IPCServer* ipcserver_ptr);
     // boolean Epoll_AddEvent( IPCServer&& ipcserver);
     // boolean Epoll_AddEvent(const IPCServer& ipcserver);
